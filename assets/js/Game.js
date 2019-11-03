@@ -1,1 +1,2 @@
-Crafty.init(1000,760, document.getElementById('game'));
+Crafty.init(1000,700, document.getElementById('game'));
+Crafty.background("blue");
