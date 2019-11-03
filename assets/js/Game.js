@@ -53,7 +53,7 @@ Crafty.e("2D, Canvas, Color, Vegg")
     .color('black');
 // FiendtligObjekt
 setInterval(spawnFiendlig, 1000);
-let randomY;
+let randomY = 0;
 
 function spawnFiendlig(){
    randomY = Math.floor((Math.random()*600) -40);
@@ -89,5 +89,5 @@ bgData.appendChild(p);
 
 setInterval(bgDataOppdater, 100);
 function bgDataOppdater() {
- document.getElementById("bgData").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1) + "Random y= " + randomY;
+ document.getElementById("bgData").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1) + "    Random y= " + randomY;
 }
