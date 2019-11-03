@@ -21,6 +21,11 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision')
   .twoway(200)
   .gravity('Floor')
   .checkHits('Obstacle')
+  .bind("Moved", function(from) {
+    if(this.hit("Obstacle")) {
+      this.attr({x:from.x, y:from.y});
+    }
+  })
   .bind("HitOn", function(hitData) {
     Crafty("Obstacle").color('red');
     console.log(hitData);
