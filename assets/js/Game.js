@@ -60,7 +60,7 @@ function spawnFiendlig(){
    randomSpawn = Math.floor((Math.random()*10)+1);
 
    if(randomSpawn <=7){
-    Crafty.e("2D, Canvas, Color, FiendtligObjekt")
+    Crafty.e("2D, Canvas, Color, Collision, FiendtligObjekt")
       .attr({
         x: 1050,
         y: randomY,
@@ -68,6 +68,10 @@ function spawnFiendlig(){
         h: 40,
         hSpeed: -2,
         rotation: 45
+      })
+      .checkHits()
+      .onHit("spiller", function(){
+        this.color("black");
       })
       .color('orange')
       .bind('EnterFrame', function() {
