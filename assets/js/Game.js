@@ -52,13 +52,14 @@ Crafty.e("2D, Canvas, Color, Vegg")
     })
     .color('black');
 // FiendtligObjekt
-setInterval(spawnFiendlig, 10000);
+setInterval(spawnFiendlig, 1000);
 let randomY;
+
 function spawnFiendlig(){
    randomY = Math.floor((Math.random()*600) -40);
    randomSpawn = Math.floor((Math.random()*10)+1);
 
-   if(randomSpawn <7){
+   if(randomSpawn <=7){
     Crafty.e("2D, Canvas, Color, FiendtligObjekt")
       .attr({
         x: 1050,
