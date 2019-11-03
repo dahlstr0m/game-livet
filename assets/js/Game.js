@@ -15,22 +15,23 @@ Crafty.e('2D, Canvas, Solid, Color')
   .color('#303030');
 
 // Legg til spiller.
-Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision')
+Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
   .attr({x: 500, y: 0, w: 25, h: 50})
   .color('#F00')
   .twoway(200)
   .gravity('Floor')
-  .checkHits('Obstacle')
+  .checkHits('Vegg')
   .bind("HitOn", function(hitData) {
-    Crafty("Obstacle").color('red');
+    Crafty("Vegg").color('red');
     console.log(hitData);
+    Crafty("spiller").x +=50; 
   })
   .bind("HitOff", function(comp) {
-    Crafty("Obstacle").color('black');
+    Crafty("Vegg").color('black');
   });
 
-// Vegg ?
-Crafty.e("2D, Canvas, Color, Obstacle")
+// Vegg
+Crafty.e("2D, Canvas, Color, Vegg")
   .attr({
     x: 0,
     y: 0,
@@ -40,10 +41,14 @@ Crafty.e("2D, Canvas, Color, Obstacle")
   .color('black');
 
 //Generer bakgrunnstall til utviklingsøyemed
-
 let bgData = document.getElementById('game');
 let p = document.createElement('p');
-p.innerText = "verdi1" + ', ' + "verdi2";
-p.style ="display:block;";
+p.innerText = "X: " + ', ' + "Y: ";
+p.style ="display:block;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
 p.id = "bgData"
 bgData.appendChild(p);
+
+setInterval(bgDataOppdater, 100);
+function bgDataOppdater() {
+ document.getElementById("bgData").innerText = "X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1);
+}
