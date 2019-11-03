@@ -14,24 +14,27 @@ Crafty.e('Floor, 2D, Canvas, Color')
 
 // Legg til spiller.
 Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
-  .attr({x: 500, y: 0, w: 25, h: 50})
+  .attr({x: 200, y: 0, w: 100, h: 200})
   .color('#F00')
   .twoway(200)
   .gravity('Floor')
-  .checkHits('Vegg')
+  .checkHits('Vegg,VeggMidt')
   .onHit("Vegg", function(){
     this.x=0;
   })
+  .onHit("VeggMidt", function(){
+    this.x=500;
+  })
   .bind("HitOn", function(hitData) {
     Crafty("Vegg").color('red');
-    console.log(hitData);
-    // Crafty("spiller").x +=8; 
+    Crafty("VeggMidt").color('red');
   })
   .bind("HitOff", function(comp) {
     Crafty("Vegg").color('black');
+    Crafty("VeggMidt").color('black');
   });
 
-// Vegg
+// Vegger
 Crafty.e("2D, Canvas, Color, Vegg")
   .attr({
     x: 0,
@@ -40,6 +43,14 @@ Crafty.e("2D, Canvas, Color, Vegg")
     h: 700
   })
   .color('black');
+  Crafty.e("2D, Canvas, Color, VeggMidt")
+    .attr({
+      x: 600,
+      y: 0,
+      w: 1,
+      h: 700
+    })
+    .color('black');
 
 //Generer bakgrunnstall til utviklingsøyemed
 let bgData = document.getElementById('game');
