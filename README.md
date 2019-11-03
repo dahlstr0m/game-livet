@@ -7,3 +7,4 @@ Crafty.js
 
 Assets:
 City Background Repetitive 3 by Alucard on OpenGameArt.org (https://opengameart.org/content/city-background-repetitive-3)
+Sky Backdrop by bart on OpenGameArt.org (https://opengameart.org/content/sky-backdrop)
