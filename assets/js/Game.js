@@ -13,8 +13,35 @@ Crafty.e('Floor, 2D, Canvas, Color')
   .color('#303030');
 
 // Legg til spiller.
-Crafty.e('2D, Canvas, Color, Twoway, Gravity')
-  .attr({x: 0, y: 0, w: 25, h: 50})
+Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision')
+  .attr({x: 500, y: 0, w: 25, h: 50})
   .color('#F00')
   .twoway(200)
-  .gravity('Floor');
+  .gravity('Floor')
+  .checkHits('Obstacle')
+  .bind("HitOn", function(hitData) {
+    Crafty("Obstacle").color('red');
+    console.log(hitData);
+  })
+  .bind("HitOff", function(comp) {
+    Crafty("Obstacle").color('black');
+  });
+
+// Vegg ?
+Crafty.e("2D, Canvas, Color, Obstacle")
+  .attr({
+    x: 0,
+    y: 0,
+    w: 1,
+    h: 700
+  })
+  .color('black');
+
+//Generer bakgrunnstall til utviklingsøyemed
+
+let bgData = document.getElementById('game');
+let p = document.createElement('p');
+p.innerText = "verdi1" + ', ' + "verdi2";
+p.style ="display:block;";
+p.id = "bgData"
+bgData.appendChild(p);
