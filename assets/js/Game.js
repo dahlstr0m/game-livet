@@ -22,7 +22,8 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
 // Unngå at spiller løper utenfor brettet.
   .checkHits('Vegg')
   .onHit("Vegg", function(){
-    this.x=0;
+    this.x=0
+    kule();
   })
   .bind("HitOn", function(hitData) {
     Crafty("Vegg").color('red');
