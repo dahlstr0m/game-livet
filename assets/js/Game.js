@@ -66,7 +66,7 @@ function spawnFiendlig(){
         y: randomY,
         w: 40,
         h: 40,
-        hSpeed: -2,
+        hSpeed: -4,
         rotation: 45
       })
       .checkHits()
@@ -80,6 +80,10 @@ function spawnFiendlig(){
     }
 };
 
+// Bakken som spilleren løper på.
+Crafty.e('Floor, 2D, Canvas, Color')
+  .attr({x: 250, y: 300, w: 400, h: 20})
+  .color('#303030');
 
 
 
