@@ -12,7 +12,7 @@ Crafty.e('Floor, 2D, Canvas, Color')
   .attr({x: 0, y: 600, w: 1000, h: 100})
   .color('#303030');
 
-// Spiller.
+// Spiller
 Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
   .attr({x: 200, y: 0, w: 75, h: 125})
   .color('#F00')
@@ -51,51 +51,112 @@ Crafty.e("2D, Canvas, Color, Vegg")
       h: 700
     })
     .color('black');
-// FiendtligObjekt
-setInterval(spawnFiendlig, 1000);
-let randomY = 0;
-
-function spawnFiendlig(){
-   randomY = Math.floor((Math.random()*600) -40);
-   randomSpawn = Math.floor((Math.random()*10)+1);
-
-   if(randomSpawn <=7){
-    Crafty.e("2D, Canvas, Color, Collision, FiendtligObjekt")
-      .attr({
-        x: 1050,
-        y: randomY,
-        w: 40,
-        h: 40,
-        hSpeed: -4,
-        rotation: 45
-      })
-      .checkHits()
-      .onHit("spiller", function(){
-        this.color("black");
-      })
-      .color('orange')
-      .bind('EnterFrame', function() {
-        this.x += this.hSpeed;
-      })
-    }
-};
-
-// Bakken som spilleren løper på.
-Crafty.e('Floor, 2D, Canvas, Color')
-  .attr({x: 250, y: 300, w: 400, h: 20})
-  .color('#303030');
 
 
+// Bakken som spilleren løper på 2. nivå
+  Crafty.e('Floor, 2D, Canvas, Color')
+    .attr({x: 250, y: 300, w: 1000, h: 20})
+    .color('#303030');
+
+//Spawn area
+  let Spawn1y = 20;
+  let Spawn2y = 160;
+  let Spawn3y = 340;
+  let Spawn4y = 480;
+  Crafty.e("2D, Canvas, Color")
+    .attr({
+    x: 985,
+    y: Spawn1y,
+    w: 15,
+    h: 120
+    })
+    .color('blue');
+  Crafty.e("2D, Canvas, Color")
+    .attr({
+    x: 985,
+    y: Spawn2y,
+    w: 15,
+    h: 120
+    })
+    .color('blue');
+  Crafty.e("2D, Canvas, Color")
+    .attr({
+    x: 985,
+    y: Spawn3y,
+    w: 15,
+    h: 120
+    })
+    .color('blue');
+  Crafty.e("2D, Canvas, Color")
+    .attr({
+      x: 985,
+      y: Spawn4y,
+      w: 15,
+      h: 120
+    })
+    .color('blue');
+
+
+// FiendtligObjekter
+    setInterval(spawnFiendlig, 1000);
+    let randomY = 0;
+    function spawnFiendlig(){
+       randomY = Math.floor((Math.random()*70));
+       randomSpawn = Math.floor(((Math.random()*5)+1));
+       //Select spawn
+       switch(randomSpawn) {
+         case 1:
+            testverdi=1;
+            randomY +=Spawn1y;
+         break;
+         case 2:
+            testverdi=2;
+            randomY += Spawn2y;
+         break;
+         case 3:
+            testverdi=3;
+            randomY += Spawn3y;
+         break;
+         case 4:
+             testverdi=4;
+             randomY += Spawn4y;
+         break;
+         default:
+             testverdi=5;
+             randomY += 1000; //Utenfor skjermen
+       }
+       //Generer objektet
+        Crafty.e("2D, Canvas, Color, Collision, FiendtligObjekt")
+          .attr({
+            x: 1050,
+            y: randomY,
+            w: 40,
+            h: 40,
+            hSpeed: -4,
+            rotation: 45
+          })
+          .checkHits()
+          .onHit("spiller", function(){
+            this.color("black");
+          })
+          .color('orange')
+          .bind('EnterFrame', function() {
+            this.x += this.hSpeed;
+          })
+    };
 
 //Generer bakgrunnstall til utviklingsøyemed
 let bgData = document.getElementById('game');
-let p = document.createElement('p');
-p.innerText = "X: " + ', ' + "Y: ";
-p.style ="display:block;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
-p.id = "bgData"
-bgData.appendChild(p);
+let div = document.createElement('div');
+div.innerHTML = '<p id="bgDataL1"></p><p id="bgDataL2"></p><p id="bgDataL3"></p><p id="bgDataL4"></p>';
+div.style ="display:Block;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
+div.id = "bgData"
+bgData.appendChild(div);
 
 setInterval(bgDataOppdater, 100);
 function bgDataOppdater() {
- document.getElementById("bgData").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1) + "    Random y= " + randomY;
+ document.getElementById("bgDataL1").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1);
+ document.getElementById("bgDataL2").innerText = "_  Spawn: " + randomSpawn;
+ document.getElementById('bgDataL3').innerText = "_ X";
+ document.getElementById('bgDataL4').innerText = "_ X";
 }
