@@ -19,10 +19,13 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
   .twoway(200)
   .gravity('Floor')
   .checkHits('Vegg')
+  .onHit("Vegg", function(){
+    this.x=0;
+  })
   .bind("HitOn", function(hitData) {
     Crafty("Vegg").color('red');
     console.log(hitData);
-    Crafty("spiller").x +=50; 
+    // Crafty("spiller").x +=8; 
   })
   .bind("HitOff", function(comp) {
     Crafty("Vegg").color('black');
