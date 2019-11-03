@@ -1,0 +1,1 @@
+Crafty.init(1000,760, document.getElementById('game'));
