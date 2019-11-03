@@ -17,7 +17,6 @@ Crafty.e('2D, Canvas, Solid, Color')
 // Legg til spiller.
 Crafty.e('2D, Canvas, Color, Twoway, Gravity')
   .attr({x: 0, y: 0, w: 25, h: 50})
-  .stopOnSolids()
   .color('#F00')
   .twoway(200)
   .gravity('Floor');
