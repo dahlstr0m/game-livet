@@ -18,12 +18,10 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
   .color('#F00')
   .twoway(200)
   .gravity('Floor')
-
-  // Sjekk etter kollisjon med vegger.
+// Sjekk etter kollisjon med vegger.
   .checkHits('Vegg,VeggMidt')
   .onHit("Vegg", function(){
     this.x=0
-    kule();
   })
   .onHit("VeggMidt", function(){
     this.x=526;
@@ -35,6 +33,11 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
   .bind("HitOff", function(comp) {
     Crafty("Vegg").color('black');
     Crafty("VeggMidt").color('black');
+  })
+
+// Gir spilleren mulighet til å hoppe flere ganger etter hverandre. (ubegrenset)
+  .bind("CheckJumping",function(){
+    this.canJump = true;
   });
 
 // Vegger
@@ -77,8 +80,14 @@ function spawnFiendlig(){
         this.color("black");
       })
       .color('orange')
+      .origin("center")
       .bind('EnterFrame', function() {
         this.x += this.hSpeed;
+        this.rotation += 6;
+        // Sletter objektet når det treffer bakveggen.
+        if (this.x < 0) {
+          this.destroy();
+        }
       })
     }
 };
@@ -101,4 +110,40 @@ bgData.appendChild(p);
 setInterval(bgDataOppdater, 100);
 function bgDataOppdater() {
  document.getElementById("bgData").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1) + "    Random y= " + randomY;
+}
+
+// Tidsteller, teller tiendedels sekunder. On spiller death - run clearInterval (ikke implementert)
+
+var timerText = Crafty.e("2D, DOM, Text")
+  .attr({ w:700, h:50, x: 250, y: 0})
+  .textFont({size:'40px', weight:'bold'})
+  .css({"text-align": "right"})
+  .textColor("#FFFFFF");
+
+var time = 0;
+var startTime = Date.now();
+
+setInterval(timerUpdate, 100);
+function timerUpdate () {
+  let time = Date.now() - startTime;
+  timerText.text((time/1000).toFixed(3).toString() + " sek");
+}
+
+// Poengteller, gir gitt mengde poeng per intervall.
+
+var poengText = Crafty.e("2D, DOM, Text")
+  .attr({ w:700, h:50, x: 250, y: 50})
+  .textFont({size:'40px'})
+  .css({"text-align": "right"})
+  .textColor("#FFFFFF");
+
+var poeng = 0;
+
+// Kan brukes til å øke hastigheten på økningen av poeng, feks når man passerer en viss poenggrense.
+var poengMultiplier = 1.5;
+
+setInterval(poengUpdate, 100);
+function poengUpdate () {
+  poeng += 1 * poengMultiplier;
+  poengText.text(poeng.toFixed(0).toString() + " livspoeng");
 }
