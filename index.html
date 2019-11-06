@@ -1,16 +1,75 @@
-<html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/game.css">
 
     <title>
         Livet - et spill som ikke tar slutt
     </title>
+
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/game.css">
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-    <div id="game"></div>
-    <script type="text/javascript" src="https://rawgithub.com/craftyjs/Crafty/release/dist/crafty-min.js"></script>
-    <script type="text/javascript" src="assets/js/Game.js"></script>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myNavbar" aria-expanded="false">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Livet</a>
+            </div>
+            <div class="navbar-collapse collapse" id="myNavbar" aria-expanded="false" style="height: 1px;">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="#">Hjem</a>
+                </li>
+                <li>
+                    <a href="#">Presentasjon</a>
+                </li>
+                <li class="dropdown">
+                    <a class ="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded ="false">
+                        Skapere
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="http://folk.ntnu.no/khiemdt/wt/index.html">Khiem</a>
+                        </li>
+                        <li>
+                            <a href="http://folk.ntnu.no/mathias??/wt/index.html">Mathias</a>
+                        </li>
+                        <li>
+                            <a href="http://folk.ntnu.no/benjamin??/wt/index.html">Benjamin</a>
+                        </li>    
+                        <li>
+                            <a href="http://folk.ntnu.no/magnuswl/wt/index.html">Magnus</a>
+                        </li>   
+                    </ul>
+                </li>
+            </ul>
+            
+            </div>
+        </div>
+    </nav>
+    <div class="jumbotron text-center">
+        <h1>Livet</h1>
+        <p>En virkelighetsnær fremstilling av det å være mann-30 i 2019</p>
+    </div>
+
+    <div class="container">
+            <div id="game"></div>
+            <script type="text/javascript" src="https://rawgithub.com/craftyjs/Crafty/release/dist/crafty-min.js"></script>
+            <script type="text/javascript" src="assets/js/Game.js"></script>
+        
+    </div>
+
 </body>
 </html>
