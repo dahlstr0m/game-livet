@@ -25,6 +25,13 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
   .onHit("VeggMidt", function(){
     this.x=526;
   })
+  .onHit("undersideGulv", function(){
+    this.y=320;
+  })
+  .onHit("fremsideGulv", function(){
+    this.x=this.x-12;
+    this.y=this.y+12;
+  })
   .bind("HitOn", function(hitData) {
     Crafty("Vegg").color('red');
     Crafty("VeggMidt").color('red');
@@ -54,87 +61,78 @@ Crafty.e("2D, Canvas, Color, Vegg")
 
 
 // Bakken som spilleren løper på 2. nivå
-  Crafty.e('Floor, 2D, Canvas, Color')
-    .attr({x: 250, y: 300, w: 1000, h: 20})
-    .color('#303030');
-
-//Spawn area
-  let Spawn1y = 20;
-  let Spawn2y = 160;
-  let Spawn3y = 340;
-  let Spawn4y = 480;
-  Crafty.e("2D, Canvas, Color")
-    .attr({
-    x: 985,
-    y: Spawn1y,
-    w: 15,
-    h: 120
+  let bakkeIder;
+  let randomBakke;
+  let randomBakkebredde;
+  setInterval(spawnBakke, 10000);
+  function spawnBakke(){
+  bakkeIder = Crafty("andreEtg").toArray();
+  randomBakke = Math.floor(((Math.random()*5)+1));
+  randomBakkebredde = Math.floor(((Math.random()*250)+200));
+  randomBakkebredde = randomBakkebredde*7,5;
+  Crafty.e("Floor, 2D, Canvas, Color, Collision, andreEtg")
+    .attr({x: 1050, y: 300, w: randomBakkebredde, h: 19, hSpeed: -2})
+    .color('black')
+    .bind('EnterFrame', function() {
+      this.x += this.hSpeed;
     })
-    .color('blue');
-  Crafty.e("2D, Canvas, Color")
-    .attr({
-    x: 985,
-    y: Spawn2y,
-    w: 15,
-    h: 120
-    })
-    .color('blue');
-  Crafty.e("2D, Canvas, Color")
-    .attr({
-    x: 985,
-    y: Spawn3y,
-    w: 15,
-    h: 120
-    })
-    .color('blue');
-  Crafty.e("2D, Canvas, Color")
-    .attr({
-      x: 985,
-      y: Spawn4y,
-      w: 15,
-      h: 120
-    })
-    .color('blue');
-
+    Crafty.e("2D, Canvas, Color, Collision, undersideGulv")
+      .attr({x: 1050, y: 319, w: randomBakkebredde, h: 1, hSpeed: -2})
+      .color('green')
+      .bind('EnterFrame', function() {
+        this.x += this.hSpeed;
+      })
+      Crafty.e("2D, Canvas, Color, Collision, fremsideGulv")
+        .attr({x: 1049, y: 301, w: 1, h: 19, hSpeed: -2})
+        .color('green')
+        .bind('EnterFrame', function() {
+          this.x += this.hSpeed;
+        })
+}
+//spawn area
+  let spawnY = [20, 160, 340, 480];
+  let spawnX = 985;
+  let spawnW = 15;
+  let spawnH = 120
+  //Generer fire spawnAreas fra array spawnY
+  for(var i=0;i<spawnY.length;i++){
+    Crafty.e("2D, Canvas, Color")
+      .attr({
+      x: spawnX,
+      y: spawnY[i],
+      w: spawnW,
+      h: spawnH
+      })
+      .color('blue');
+  }
 
 // FiendtligObjekter
     setInterval(spawnFiendlig, 1000);
     let randomY = 0;
+    let randomspawn;
     function spawnFiendlig(){
        randomY = Math.floor((Math.random()*70));
-       randomSpawn = Math.floor(((Math.random()*5)+1));
+       randomspawn = Math.floor(((Math.random()*5)+1));
        //Select spawn
-       switch(randomSpawn) {
+       switch(randomspawn) {
          case 1:
-            testverdi=1;
-            randomY +=Spawn1y;
+            randomY +=spawnY[1];
          break;
          case 2:
-            testverdi=2;
-            randomY += Spawn2y;
+            randomY += spawnY[2];
          break;
          case 3:
-            testverdi=3;
-            randomY += Spawn3y;
+            randomY += spawnY[3];
          break;
          case 4:
-             testverdi=4;
-             randomY += Spawn4y;
+             randomY += spawnY[4];
          break;
          default:
-             testverdi=5;
              randomY += 1000; //Utenfor skjermen
        }
        //Generer objektet
         Crafty.e("2D, Canvas, Color, Collision, FiendtligObjekt")
-          .attr({
-            x: 1050,
-            y: randomY,
-            w: 40,
-            h: 40,
-            hSpeed: -4,
-            rotation: 45
-          })
+          .attr({x: 1050, y: randomY, w: 40, h: 40, hSpeed: -4, rotation: 45})
           .checkHits()
           .onHit("spiller", function(){
             this.color("black");
@@ -156,7 +154,7 @@ bgData.appendChild(div);
 setInterval(bgDataOppdater, 100);
 function bgDataOppdater() {
  document.getElementById("bgDataL1").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1);
- document.getElementById("bgDataL2").innerText = "_  Spawn: " + randomSpawn;
- document.getElementById('bgDataL3').innerText = "_ X";
- document.getElementById('bgDataL4').innerText = "_ X";
+ document.getElementById("bgDataL2").innerText = "_  spawn: " + randomspawn;
+ document.getElementById('bgDataL3').innerText = "_ RandomX: " + randomBakkebredde;
+ document.getElementById('bgDataL4').innerText = "_ X" + bakkeIder.length;
 }
