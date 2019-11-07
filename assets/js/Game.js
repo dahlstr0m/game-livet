@@ -39,7 +39,12 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
   .bind("HitOff", function(comp) {
     Crafty("Vegg").color('black');
     Crafty("VeggMidt").color('black');
-  });
+  })
+
+// Gir spilleren mulighet til å hoppe flere ganger etter hverandre. (ubegrenset)
+  .bind("CheckJumping",function(){
+  this.canJump = true;
+});
 
 // Vegger
 Crafty.e("2D, Canvas, Color, Vegg")
