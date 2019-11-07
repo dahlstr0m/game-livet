@@ -162,6 +162,9 @@ Crafty.e("2D, Canvas, Color, Vegg")
           .onHit("spiller", function(){
             this.color("black");
           })
+          .onHit("Vegg", function() { // Fjern objektet når det treffer bakveggen (det kan lages ny bakvegg lenger bak som fjerner objektene)
+            this.destroy();
+          })
           .color('orange')
           .bind('EnterFrame', function() {
             this.x += this.hSpeed;
