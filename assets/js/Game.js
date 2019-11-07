@@ -30,8 +30,8 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
     this.y=320;
   })
   .onHit("fremsideGulv", function(){
-    this.x=this.x-12;
-    this.y=this.y+12;
+    this.x=this.x-20;
+    this.y=this.y+10;
   })
   .bind("HitOn", function(hitData) {
     Crafty("Vegg").color('red');
@@ -70,35 +70,50 @@ Crafty.e("2D, Canvas, Color, Vegg")
   let bakkeIder;
   let randomBakke;
   let randomBakkebredde;
-  setInterval(spawnBakke, 10000);
+  let posisjonSisteBakke = -1000000;
+  let sluttposisjonSisteBakke;
+  setInterval(spawnBakke, 1000);
   function spawnBakke(){
-  bakkeIder = Crafty("andreEtg").toArray();
-  randomBakke = Math.floor(((Math.random()*5)+1));
-  randomBakkebredde = Math.floor(((Math.random()*250)+200));
-  randomBakkebredde = randomBakkebredde*7,5;
-  Crafty.e("Floor, 2D, Canvas, Color, Collision, andreEtg")
-    .attr({x: 1050, y: 300, w: randomBakkebredde, h: 19, hSpeed: -2})
-    .color('black')
-    .bind('EnterFrame', function() {
-      this.x += this.hSpeed;
-    })
-    Crafty.e("2D, Canvas, Color, Collision, undersideGulv")
-      .attr({x: 1050, y: 319, w: randomBakkebredde, h: 1, hSpeed: -2})
-      .color('green')
-      .bind('EnterFrame', function() {
-        this.x += this.hSpeed;
-        this.rotation += 6;
-        // Sletter objektet når det treffer bakveggen.
-        if (this.x < 0) {
-          this.destroy();
-        }
-      })
-      Crafty.e("2D, Canvas, Color, Collision, fremsideGulv")
-        .attr({x: 1049, y: 301, w: 1, h: 19, hSpeed: -2})
-        .color('green')
-        .bind('EnterFrame', function() {
-          this.x += this.hSpeed;
-        })
+    //Sjekk om det er første 2.etg bakke eller finnes en fra før
+      //Oppdaterer variablene til siste posisjon
+      if (posisjonSisteBakke==-1000000) {
+          sluttposisjonSisteBakke = -999;
+      }else{
+          posisjonSisteBakke = Crafty("andreEtg").get(bakkeIder.length-1).x;
+          sluttposisjonSisteBakke = randomBakkebredde*-1.15;
+      }
+      //Sjekk om siste bakke/gulv er ute av frame, generer ny
+      if (posisjonSisteBakke <= sluttposisjonSisteBakke){
+      randomBakke = Math.floor(((Math.random()*5)+1));
+      randomBakkebredde = Math.floor(((Math.random()*250)+200));
+      randomBakkebredde = randomBakkebredde*3,5;
+
+        //Generer bakke/gulv
+        Crafty.e("Floor, 2D, Canvas, Color, Collision, andreEtg")
+          .attr({x: 1050, y: 300, w: randomBakkebredde, h: 19, hSpeed: -2})
+          .color('black')
+          .bind('EnterFrame', function() {
+            this.x += this.hSpeed;
+
+          })
+        //Generer kolisjonbarriere for underside og front av bakke/gulv
+        Crafty.e("2D, Canvas, Color, Collision, undersideGulv")
+          .attr({x: 1050, y: 319, w: randomBakkebredde, h: 1, hSpeed: -2})
+          .color('green')
+          .bind('EnterFrame', function() {
+            this.x += this.hSpeed;
+          })
+        Crafty.e("2D, Canvas, Color, Collision, fremsideGulv")
+          .attr({x: 1045, y: 301, w: 5, h: 19, hSpeed: -2})
+          .color('green')
+          .bind('EnterFrame', function() {
+            this.x += this.hSpeed;
+          })
+
+        //Oppdater array med alle andreEtg bakker/gulv
+        bakkeIder = Crafty("andreEtg").toArray();
+        posisjonSisteBakke = Crafty("andreEtg").get(bakkeIder.length-1).x;
+      }
 }
 //spawn area
   let spawnY = [20, 160, 340, 480];
@@ -166,8 +181,8 @@ setInterval(bgDataOppdater, 100);
 function bgDataOppdater() {
  document.getElementById("bgDataL1").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1);
  document.getElementById("bgDataL2").innerText = "_  spawn: " + randomspawn;
- document.getElementById('bgDataL3').innerText = "_ RandomX: " + randomBakkebredde;
- document.getElementById('bgDataL4').innerText = "_ X" + bakkeIder.length;
+ document.getElementById('bgDataL3').innerText = "_ Verdi på siste andreEtg: " + bakkeIder.length + " xverdi: "+ Crafty("andreEtg").get(bakkeIder.length-1).x;
+ document.getElementById('bgDataL4').innerText = "_ bakkeIder: " + bakkeIder + " Random bakkebredde: " + randomBakkebredde;
 }
 
 // Tidsteller, teller tiendedels sekunder. On spiller death - run clearInterval (ikke implementert)
