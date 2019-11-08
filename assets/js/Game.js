@@ -8,22 +8,25 @@ Crafty.map.boundaries({min: {x:0, y:0}, max: {x:1000, y:700}})
 Crafty.background("#7DDEEF url(assets/img/sky1.png) no-repeat center center");
 
 // Bakken som spilleren løper på.
-Crafty.e('Floor, 2D, Canvas, Color')
+Crafty.e('Floor, 2D, Canvas, Color, Collision')
   .attr({x: 0, y: 600, w: 1000, h: 100})
   .color('#303030');
 
 // Spiller
 Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
-  .attr({x: 200, y: 0, w: 75, h: 125})
+  .attr({x: 200, y: 0, w: 75, h: 125, hoppi: 0})
   .color('#F00')
   .twoway(200)
   .gravity('Floor')
-  .checkHits('Vegg,VeggMidt')
+  .checkHits('Vegg,VeggMidt, Floor')
   .onHit("Vegg", function(){
     this.x=0;
   })
   .onHit("VeggMidt", function(){
     this.x=526;
+  })
+  .onHit("Floor", function(){
+    this.hoppi = 0;
   })
   .onHit("undersideGulv", function(){
     this.y=320;
@@ -32,6 +35,8 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
     this.x=this.x-20;
     this.y=this.y+10;
   })
+  //Fjernes før levering
+    //Fjern fra her-
   .bind("HitOn", function(hitData) {
     Crafty("Vegg").color('red');
     Crafty("VeggMidt").color('red');
@@ -40,11 +45,23 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
     Crafty("Vegg").color('black');
     Crafty("VeggMidt").color('black');
   })
+    //Fjern hit -
+  //Kun tillatt dobbelhopp
+    .bind("CheckJumping",function(){
+      this.jumpspeed = 150;
+      this.canJump = true;
+      if(this.hoppi==0){
+        this.hoppi++;
+        this.canJump = true;
+      }else if (this.hoppi==1) {
+          this.canJump = true;
+          this.hoppi++;
+      }else{
+        this.canJump = false;
+      }
 
-  // Gir spilleren mulighet til å hoppe flere ganger etter hverandre. (ubegrenset)
-  .bind("CheckJumping",function(){
-  this.canJump = true;
-});
+  });
+
 
 // Vegger
 Crafty.e("2D, Canvas, Color, Vegg")
@@ -66,24 +83,27 @@ Crafty.e("2D, Canvas, Color, Vegg")
 
 
 // Bakken som spilleren løper på 2. nivå
-  let bakkeIder;
-  let randomBakke;
-  let randomBakkebredde;
-  let posisjonSisteBakke = -1000000;
-  let sluttposisjonSisteBakke;
+  //Definerer variabler
+  let bakkeIder,randomBakkebredde,posisjonSisteBakke = -1000000,sluttposisjonSisteBakke;
+  //Oppdateringsfrekvens
   setInterval(spawnBakke, 1000);
+  //Funksjon hver klokkefrekvens
   function spawnBakke(){
-    //Sjekk om det er første 2.etg bakke eller finnes en fra før
-      //Oppdaterer variablene til siste posisjon
-      if (posisjonSisteBakke==-1000000) {
-          sluttposisjonSisteBakke = -999;
+    //Sjekk om det er første 2.etg som genereres eller om det finnes en fra før
+      //Oppdaterer variablene til siste posisjon om den finnes, ellers "default"
+      if (posisjonSisteBakke==-1000000) { //Default
+          sluttposisjonSisteBakke = -999; //Default
       }else{
           posisjonSisteBakke = Crafty("andreEtg").get(bakkeIder.length-1).x;
           sluttposisjonSisteBakke = randomBakkebredde*-1.15;
       }
       //Sjekk om siste bakke/gulv er ute av frame, generer ny
       if (posisjonSisteBakke <= sluttposisjonSisteBakke){
-      randomBakke = Math.floor(((Math.random()*5)+1));
+        //Slett forrige bakke, hopp over om default verdi
+        if (posisjonSisteBakke!=-1000000){
+        Crafty("andreEtg").get(bakkeIder.length-1).destroy();
+      }
+      //Kalkuler bredde
       randomBakkebredde = Math.floor(((Math.random()*250)+200));
       randomBakkebredde = randomBakkebredde*3,5;
 
@@ -184,7 +204,7 @@ function bgDataOppdater() {
  document.getElementById("bgDataL1").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1);
  document.getElementById("bgDataL2").innerText = "_  spawn: " + randomspawn;
  document.getElementById('bgDataL3').innerText = "_ Verdi på siste andreEtg: " + bakkeIder.length + " xverdi: "+ Crafty("andreEtg").get(bakkeIder.length-1).x;
- document.getElementById('bgDataL4').innerText = "_ bakkeIder: " + bakkeIder + " Random bakkebredde: " + randomBakkebredde;
+ document.getElementById('bgDataL4').innerText = "_ HarDoublejump: " +  Crafty("spiller").harDobbelHopp + "_ er i hopp: " + Crafty("spiller").hoppi;
 }
 
 // Tidsteller, teller tiendedels sekunder. On spiller death - run clearInterval (ikke implementert)
