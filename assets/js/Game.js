@@ -5,7 +5,7 @@ Crafty.init(1000,700, document.getElementById('game'));
 Crafty.map.boundaries({min: {x:0, y:0}, max: {x:1000, y:700}})
 
 // Fast bakgrunn.
-Crafty.background("#7DDEEF url(assets/img/sky1.png) no-repeat center center");
+Crafty.background("#7DDEEF url(assets/img/livet_background.png) no-repeat center center");
 
 // Bakken som spilleren løper på.
 Crafty.e('Floor, 2D, Canvas, Color, Collision')
