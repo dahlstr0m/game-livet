@@ -30,6 +30,7 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
   })
   .onHit("undersideGulv", function(){
     this.y=320;
+    this.hoppi = 2;
   })
   .onHit("fremsideGulv", function(){
     this.x=this.x-20;
@@ -80,6 +81,14 @@ Crafty.e("2D, Canvas, Color, Vegg")
       h: 700
     })
     .color('black');
+    Crafty.e("2D, Canvas, Color, VeggDestroy")
+      .attr({
+        x: -100,
+        y: -500,
+        w: 1,
+        h: 2000
+      })
+      .color('black');
 
 
 // Bakken som spilleren løper på 2. nivå
@@ -109,7 +118,7 @@ Crafty.e("2D, Canvas, Color, Vegg")
 
         //Generer bakke/gulv
         Crafty.e("Floor, 2D, Canvas, Color, Collision, andreEtg")
-          .attr({x: 1050, y: 300, w: randomBakkebredde, h: 19, hSpeed: -2})
+          .attr({x: 1050, y: 300, w: randomBakkebredde, h: 15, hSpeed: -2})
           .color('black')
           .bind('EnterFrame', function() {
             this.x += this.hSpeed;
@@ -117,7 +126,7 @@ Crafty.e("2D, Canvas, Color, Vegg")
           })
         //Generer kolisjonbarriere for underside og front av bakke/gulv
         Crafty.e("2D, Canvas, Color, Collision, undersideGulv")
-          .attr({x: 1050, y: 319, w: randomBakkebredde, h: 1, hSpeed: -2})
+          .attr({x: 1050, y: 315, w: randomBakkebredde, h: 5, hSpeed: -2})
           .color('green')
           .bind('EnterFrame', function() {
             this.x += this.hSpeed;
@@ -175,14 +184,14 @@ Crafty.e("2D, Canvas, Color, Vegg")
          default:
              randomY += 1000; //Utenfor skjermen
        }
-       //Generer objektet
+       //Generer det fiendlige objektet
         Crafty.e("2D, Canvas, Color, Collision, FiendtligObjekt")
           .attr({x: 1050, y: randomY, w: 40, h: 40, hSpeed: -4, rotation: 45})
           .checkHits()
           .onHit("spiller", function(){
             this.color("black");
           })
-          .onHit("Vegg", function() { // Fjern objektet når det treffer bakveggen (det kan lages ny bakvegg lenger bak som fjerner objektene)
+          .onHit("VeggDestroy", function() { // Fjern objektet når det treffer bakveggen
             this.destroy();
           })
           .color('orange')
