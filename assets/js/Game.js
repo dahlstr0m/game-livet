@@ -27,13 +27,15 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
   })
   .onHit("Floor", function(){
     this.hoppi = 0;
+    this.rotation = 0;
   })
   .onHit("undersideGulv", function(){
     this.y=320;
-    this.hoppi = 2;
+    this.hoppi = 3;
+    this.rotation = 45;
   })
   .onHit("fremsideGulv", function(){
-    this.x=this.x-20;
+    this.x=this.x-10;
     this.y=this.y+10;
   })
   //Fjernes før levering
@@ -165,7 +167,7 @@ Crafty.e("2D, Canvas, Color, Vegg")
     let randomY = 0;
     let randomspawn;
     function spawnFiendlig(){
-       randomY = Math.floor((Math.random()*70));
+       randomY = Math.floor((Math.random()*68)+2);
        randomspawn = Math.floor(((Math.random()*5)+1));
        //Select spawn
        switch(randomspawn) {
