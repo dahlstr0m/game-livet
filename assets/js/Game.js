@@ -27,12 +27,12 @@ Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller')
   })
   .onHit("Floor", function(){
     this.hoppi = 0;
-    this.rotation = 0;
+    this.rotation = 0;        //Tryn/fall
   })
   .onHit("undersideGulv", function(){
     this.y=320;
-    this.hoppi = 3;
-    this.rotation = 45;
+    this.hoppi = 3;           //Tryn/fall
+    this.rotation = 45;       //Tryn/fall
   })
   .onHit("fremsideGulv", function(){
     this.x=this.x-10;
