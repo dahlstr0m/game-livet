@@ -1,16 +1,16 @@
 
 //Generer bakgrunnstall til utviklingsøyemed
-let bgData = document.getElementById('game');
-let div = document.createElement('div');
-div.innerHTML = '<p id="bgDataL1"></p>';
-div.style ="display:block;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
-div.id = "bgData"
-bgData.appendChild(div);
+    let bgData = document.getElementById('game');
+    let div = document.createElement('div');
+    div.innerHTML = '<p id="bgDataL1"></p>';
+    div.style ="display:none;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
+    div.id = "bgData"
+    bgData.appendChild(div);
 
-setInterval(bgDataOppdater, 100);
-function bgDataOppdater() {
- document.getElementById("bgDataL1").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1);
-}
+    setInterval(bgDataOppdater, 100);
+    function bgDataOppdater() {
+     document.getElementById("bgDataL1").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1);
+    }
 
 // Initialiser spillet, angi størrelse på spillvindu.
 Crafty.init(1000,700, document.getElementById('game'));
