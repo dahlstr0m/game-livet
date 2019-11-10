@@ -17,8 +17,25 @@ Crafty.init(1000,700, document.getElementById('game'));
 
 // Boundaries for brettet.
 Crafty.map.boundaries({min: {x:0, y:0}, max: {x:1000, y:700}})
+
 // Fast bakgrunn.
-Crafty.background("#7DDEEF url(assets/img/livet_background.png) no-repeat center center");
+Crafty.background("#7DDEEF url(assets/img/livet_background.png) repeat center center");
+
+// Bakgrunnsby i ulike lag.
+Crafty.createLayer("SkylineLayer", "Canvas",{z:0})
+Crafty.e("2D, SkylineLayer, Image, Persist")
+    .attr({w: Crafty.viewport.width, h: Crafty.viewport.height})
+    .image("assets/img/livet_skyline.png", "no-repeat");
+
+Crafty.createLayer("MiddleLayer", "Canvas",{z:1})
+Crafty.e("2D, SkylineLayer, Image, Persist")
+    .attr({w: Crafty.viewport.width, h: Crafty.viewport.height})
+    .image("assets/img/livet_middle.png", "no-repeat");
+
+Crafty.createLayer("ForegroundLayer", "Canvas",{z:2})
+Crafty.e("2D, SkylineLayer, Image, Persist")
+    .attr({w: Crafty.viewport.width, h: Crafty.viewport.height})
+    .image("assets/img/livet_foreground.png", "no-repeat");
 
 // Definerer Startskjerm
 Crafty.defineScene("startSkjerm", function() {
@@ -112,6 +129,7 @@ Crafty.defineScene("startSkjerm", function() {
               h: 2000
             })
             .color('black');
+
           //Timer tekst
           Crafty.e("2D, DOM, Text, timerText, Persist")
             .attr({ w:700, h:50, x: 250, y: 15})
@@ -119,6 +137,7 @@ Crafty.defineScene("startSkjerm", function() {
             .css({"text-align": "right"})
             .textColor("#FFFFFF")
             .text("0.000 sek");
+
           //Poengtekst
           Crafty.e("2D, DOM, Text, poengText, Persist")
             .attr({w:700, h:50, x: 250, y: 60})
@@ -169,7 +188,7 @@ Crafty.defineScene("spillet", function() {
               }
               //Kalkuler bredde
               randomBakkebredde = Math.floor(((Math.random()*250)+200));
-              randomBakkebredde = randomBakkebredde*3,5;
+              randomBakkebredde = randomBakkebredde*3.5;
 
                 //Generer bakke/gulv
                 Crafty.e("Floor, 2D, Canvas, Color, Collision, andreEtg")
