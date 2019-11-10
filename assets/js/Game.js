@@ -3,7 +3,7 @@
     let bgData = document.getElementById('game');
     let div = document.createElement('div');
     div.innerHTML = '<p id="bgDataL1"></p>';
-    div.style ="display:none;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
+    div.style ="display:block;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
     div.id = "bgData"
     bgData.appendChild(div);
 
@@ -135,6 +135,10 @@ Crafty.defineScene("spillet", function() {
             spawnBakke();
             spawnFiendlig();
           }, 1000);
+        setInterval(function () {
+            poengUpdate();
+            timerUpdate();
+          }, 100);
 
 
 
@@ -249,21 +253,15 @@ Crafty.defineScene("spillet", function() {
         // Tidsteller, teller tiendedels sekunder. On spiller death - run clearInterval (ikke implementert)
         var time = 0;
         var startTime = Date.now();
-
-        setInterval(timerUpdate, 100);
         function timerUpdate () {
           let time = Date.now() - startTime;
           Crafty("timerText").text((time/1000).toFixed(3).toString() + " sek");
         }
 
         // Poengteller, gir gitt mengde poeng per intervall.
-
         var poeng = 0;
-
         // Kan brukes til å øke hastigheten på økningen av poeng, feks når man passerer en viss poenggrense.
         var poengMultiplier = 1.5;
-
-        setInterval(poengUpdate, 100);
         function poengUpdate () {
           poeng += 1 * poengMultiplier;
           Crafty("poengText").text(poeng.toFixed(0).toString() + " livspoeng");
