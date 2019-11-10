@@ -19,7 +19,7 @@ Crafty.init(1000,700, document.getElementById('game'));
 Crafty.map.boundaries({min: {x:0, y:0}, max: {x:1000, y:700}})
 
 // Fast bakgrunn.
-Crafty.background("#7DDEEF url(assets/img/livet_background.png) no-repeat center center");
+Crafty.background("#7DDEEF url(assets/img/livet_background.png) repeat center center");
 
 // Bakgrunnsby i ulike lag.
 Crafty.createLayer("SkylineLayer", "Canvas",{z:0})
