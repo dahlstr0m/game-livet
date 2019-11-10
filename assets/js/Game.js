@@ -3,7 +3,7 @@
     let bgData = document.getElementById('game');
     let div = document.createElement('div');
     div.innerHTML = '<p id="bgDataL1"></p>';
-    div.style ="display:block;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
+    div.style ="display:none;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
     div.id = "bgData"
     bgData.appendChild(div);
 
@@ -30,7 +30,7 @@ Crafty.defineScene("startSkjerm", function() {
       .css({"text-align": "center"})
       .textColor("#FFFFFF")
       .bind('Click', function(MouseEvent){
-        Crafty.enterScene("spillet");
+        Crafty.enterScene("spillet");           //Start spillet
       });
 
       // Spiller
@@ -51,7 +51,7 @@ Crafty.defineScene("startSkjerm", function() {
       //    this.rotation = 0;        //Tryn/fall
         })
         .onHit("starter", function(){
-          Crafty.enterScene("spillet");
+          Crafty.enterScene("spillet");       //Start spillet
         })
         .onHit("undersideGulv", function(){
           this.y=320;
@@ -130,17 +130,23 @@ Crafty.defineScene("startSkjerm", function() {
 
 //Definerer spillet
 Crafty.defineScene("spillet", function() {
+  let dod = false;
+
         //Oppdater hver klokkefrekvens
         setInterval(function () {
+            if (dod===false){ //oppdater tid og poeng så lenge ikke død
+              poengUpdate();
+              timerUpdate();
+            }
+          }, 100);
+        setInterval(function () {
+          if (dod===true){    //Spawn nye så lenge ikke død
+            poengTavle();
+          }else{
             spawnBakke();
             spawnFiendlig();
+        }
           }, 1000);
-        setInterval(function () {
-            poengUpdate();
-            timerUpdate();
-          }, 100);
-
-
 
         // Bakken som spilleren løper på 2. nivå
           //Definerer variabler
@@ -170,21 +176,26 @@ Crafty.defineScene("spillet", function() {
                   .attr({x: 1050, y: 300, w: randomBakkebredde, h: 15, hSpeed: -2})
                   .color('black')
                   .bind('EnterFrame', function() {
+                    if (dod===false){
                     this.x += this.hSpeed;
-
+                  }
                   })
                 //Generer kolisjonbarriere for underside og front av bakke/gulv
                 Crafty.e("2D, Canvas, Color, Collision, undersideGulv")
                   .attr({x: 1050, y: 315, w: randomBakkebredde, h: 5, hSpeed: -2})
                   .color('green')
                   .bind('EnterFrame', function() {
+                    if (dod===false){
                     this.x += this.hSpeed;
+                  }
                   })
                 Crafty.e("2D, Canvas, Color, Collision, fremsideGulv")
                   .attr({x: 1045, y: 301, w: 5, h: 19, hSpeed: -2})
                   .color('green')
                   .bind('EnterFrame', function() {
+                    if (dod===false){
                     this.x += this.hSpeed;
+                  }
                   })
 
                 //Oppdater array med alle andreEtg bakker/gulv
@@ -238,14 +249,17 @@ Crafty.defineScene("spillet", function() {
                   .attr({x: 1050, y: randomY, w: 40, h: 40, hSpeed: -4, rotation: 45})
                   .checkHits()
                   .onHit("spiller", function(){
-                    Crafty.enterScene("dode");
+                    dod=true;
+                    Crafty("spiller").destroy();
                   })
                   .onHit("VeggDestroy", function() { // Fjern objektet når det treffer bakveggen
                     this.destroy();
                   })
                   .color('orange')
                   .bind('EnterFrame', function() {
+                    if (dod===false){
                     this.x += this.hSpeed;
+                  }
                   })
             };
 
@@ -267,10 +281,16 @@ Crafty.defineScene("spillet", function() {
           Crafty("poengText").text(poeng.toFixed(0).toString() + " livspoeng");
         }
 
+      function poengTavle(){
+        Crafty.e("2D, Canvas, Color, poengTavle")
+          .attr({x: 300, y: 100, w: 400, h: 500})
+          .color('white');
+      }
+
 }); //Avslutt define spillet
 
-//Definerer dode scene
-Crafty.defineScene("dode", function() {
+//Definerer scorescene
+Crafty.defineScene("score", function() {
 
 
 
