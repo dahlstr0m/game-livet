@@ -221,7 +221,7 @@ var startTime = Date.now();
 setInterval(timerUpdate, 100);
 function timerUpdate () {
   let time = Date.now() - startTime;
-  timerText.text((time/1000).toFixed(3).toString() + " sek");
+  timerText.text((time/1000).toFixed(1).toString() + " sek");
 }
 
 // Poengteller, gir gitt mengde poeng per intervall.
