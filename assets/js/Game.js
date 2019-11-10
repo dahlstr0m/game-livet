@@ -1,16 +1,16 @@
 
 //Generer bakgrunnstall til utviklingsøyemed
-let bgData = document.getElementById('game');
-let div = document.createElement('div');
-div.innerHTML = '<p id="bgDataL1"></p>';
-div.style ="display:block;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
-div.id = "bgData"
-bgData.appendChild(div);
+    let bgData = document.getElementById('game');
+    let div = document.createElement('div');
+    div.innerHTML = '<p id="bgDataL1"></p>';
+    div.style ="display:block;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
+    div.id = "bgData"
+    bgData.appendChild(div);
 
-setInterval(bgDataOppdater, 100);
-function bgDataOppdater() {
- document.getElementById("bgDataL1").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1);
-}
+    setInterval(bgDataOppdater, 100);
+    function bgDataOppdater() {
+     document.getElementById("bgDataL1").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1) + ' ___hoppi: '+Crafty("spiller").hoppi;
+    }
 
 // Initialiser spillet, angi størrelse på spillvindu.
 Crafty.init(1000,700, document.getElementById('game'));
@@ -23,8 +23,8 @@ Crafty.background("#7DDEEF url(assets/img/livet_background.png) no-repeat center
 // Definerer Startskjerm
 Crafty.defineScene("startSkjerm", function() {
 
-  Crafty.e("2D, DOM, Text, Mouse")
-      .attr({ w: 400, h: 200, x: 300, y: 200 })
+  Crafty.e("2D, DOM, Text, Mouse, Collision, starter")
+      .attr({ w: 300, h: 160, x: 300, y: 200 })
       .text("Start")
       .textFont({size:'130px', weight:'bold'})
       .css({"text-align": "center"})
@@ -48,8 +48,10 @@ Crafty.defineScene("startSkjerm", function() {
         })
         .onHit("Floor", function(){
           this.hoppi = 0;
-          this.canJump= true;
       //    this.rotation = 0;        //Tryn/fall
+        })
+        .onHit("starter", function(){
+          Crafty.enterScene("spillet");
         })
         .onHit("undersideGulv", function(){
           this.y=320;
@@ -57,8 +59,8 @@ Crafty.defineScene("startSkjerm", function() {
         //  this.rotation = 45;       //Tryn/fall
         })
         .onHit("fremsideGulv", function(){
-          this.x=this.x-8;
-          this.y=this.y+8;
+          this.x=this.x-2;
+          this.y=this.y+2;
         })
         //Kun tillatt dobbelhopp
           .bind("CheckJumping",function(){
@@ -71,7 +73,11 @@ Crafty.defineScene("startSkjerm", function() {
                 this.canJump = true;
                 this.hoppi++;
             }else{
-              this.canJump = false;
+              if (this.y==475) {
+                  this.hoppi=0;
+              }else{
+                this.canJump = false;
+              }
             }
 
         });
@@ -90,34 +96,56 @@ Crafty.defineScene("startSkjerm", function() {
               h: 700
             })
             .color('black');
-            Crafty.e("2D, Canvas, Color, VeggMidt, Persist")
-              .attr({
-                x: 800,
-                y: 0,
-                w: 1,
-                h: 700
-              })
-              .color('black');
-              Crafty.e("2D, Canvas, Color, VeggDestroy, Persist")
-                .attr({
-                  x: -100,
-                  y: -500,
-                  w: 1,
-                  h: 2000
-                })
-                .color('black');
+          Crafty.e("2D, Canvas, Color, VeggMidt, Persist")
+            .attr({
+              x: 800,
+              y: 0,
+              w: 1,
+              h: 700
+            })
+            .color('black');
+          Crafty.e("2D, Canvas, Color, VeggDestroy, Persist")
+            .attr({
+              x: -100,
+              y: -500,
+              w: 1,
+              h: 2000
+            })
+            .color('black');
+          //Timer tekst
+          Crafty.e("2D, DOM, Text, timerText, Persist")
+            .attr({ w:700, h:50, x: 250, y: 15})
+            .textFont({size:'40px', weight:'bold'})
+            .css({"text-align": "right"})
+            .textColor("#FFFFFF")
+            .text("0.000 sek");
+          //Poengtekst
+          Crafty.e("2D, DOM, Text, poengText, Persist")
+            .attr({w:700, h:50, x: 250, y: 60})
+            .textFont({size:'40px'})
+            .css({"text-align": "right"})
+            .textColor("#FFFFFF")
+            .text("0 livspoeng");
 });
 
 //Definerer spillet
 Crafty.defineScene("spillet", function() {
+        //Oppdater hver klokkefrekvens
+        setInterval(function () {
+            spawnBakke();
+            spawnFiendlig();
+          }, 1000);
+        setInterval(function () {
+            poengUpdate();
+            timerUpdate();
+          }, 100);
+
 
 
         // Bakken som spilleren løper på 2. nivå
           //Definerer variabler
           let bakkeIder,randomBakkebredde,posisjonSisteBakke = -1000000,sluttposisjonSisteBakke;
-          //Oppdateringsfrekvens
-          setInterval(spawnBakke, 1000);
-          //Funksjon hver klokkefrekvens
+          //Spawn bakke
           function spawnBakke(){
             //Sjekk om det er første 2.etg som genereres eller om det finnes en fra før
               //Oppdaterer variablene til siste posisjon om den finnes, ellers "default"
@@ -182,9 +210,9 @@ Crafty.defineScene("spillet", function() {
           }
 
         // FiendtligObjekter
-            setInterval(spawnFiendlig, 1000);
             let randomY = 0;
             let randomspawn;
+            //Spawn fiender funksjon
             function spawnFiendlig(){
                randomY = Math.floor((Math.random()*68)+2);
                randomspawn = Math.floor(((Math.random()*5)+1));
@@ -210,7 +238,7 @@ Crafty.defineScene("spillet", function() {
                   .attr({x: 1050, y: randomY, w: 40, h: 40, hSpeed: -4, rotation: 45})
                   .checkHits()
                   .onHit("spiller", function(){
-                    this.color("black");
+                    Crafty.enterScene("dode");
                   })
                   .onHit("VeggDestroy", function() { // Fjern objektet når det treffer bakveggen
                     this.destroy();
@@ -223,43 +251,30 @@ Crafty.defineScene("spillet", function() {
 
 
         // Tidsteller, teller tiendedels sekunder. On spiller death - run clearInterval (ikke implementert)
-
-        var timerText = Crafty.e("2D, DOM, Text")
-          .attr({ w:700, h:50, x: 250, y: 0})
-          .textFont({size:'40px', weight:'bold'})
-          .css({"text-align": "right"})
-          .textColor("#FFFFFF");
-
         var time = 0;
         var startTime = Date.now();
-
-        setInterval(timerUpdate, 100);
         function timerUpdate () {
           let time = Date.now() - startTime;
-          timerText.text((time/1000).toFixed(3).toString() + " sek");
+          Crafty("timerText").text((time/1000).toFixed(3).toString() + " sek");
         }
 
         // Poengteller, gir gitt mengde poeng per intervall.
-
-        var poengText = Crafty.e("2D, DOM, Text")
-          .attr({ w:700, h:50, x: 250, y: 50})
-          .textFont({size:'40px'})
-          .css({"text-align": "right"})
-          .textColor("#FFFFFF");
-
         var poeng = 0;
-
         // Kan brukes til å øke hastigheten på økningen av poeng, feks når man passerer en viss poenggrense.
         var poengMultiplier = 1.5;
-
-        setInterval(poengUpdate, 100);
         function poengUpdate () {
           poeng += 1 * poengMultiplier;
-          poengText.text(poeng.toFixed(0).toString() + " livspoeng");
+          Crafty("poengText").text(poeng.toFixed(0).toString() + " livspoeng");
         }
 
 }); //Avslutt define spillet
 
+//Definerer dode scene
+Crafty.defineScene("dode", function() {
+
+
+
+}); //Avslutt define dode
 
 //Kjør spillet
 Crafty.enterScene("startSkjerm");
