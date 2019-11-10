@@ -1,0 +1,26 @@
+#body {
+    margin-left: 35px;
+    margin-right: 200px;
+    margin-bottom: 35px;
+  }
+
+  #hovedoverskrift {
+      color: tomato;
+  }
+
+  h1,h2,h3,h4,h5 {
+    color: navy;
+  }
+
+  p.b {
+    font-style: italic;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  table, th, td {
+    border: 1px solid black;
+    text-align: left;
+  }

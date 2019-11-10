@@ -28,11 +28,11 @@
             </div>
             <div class="navbar-collapse collapse" id="myNavbar" aria-expanded="false" style="height: 1px;">
             <ul class="nav navbar-nav">
-                <li class="active">
-                    <a href="#">Hjem</a>
-                </li>
                 <li>
-                    <a href="presentasjon.html">Presentasjon</a>
+                    <a href="index.html">Hjem</a>
+                </li>
+                <li class="active">
+                    <a href="#">Presentasjon</a>
                 </li>
                 <li class="dropdown">
                     <a class ="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded ="false">
@@ -59,16 +59,41 @@
             </div>
         </div>
     </nav>
-    <div class="jumbotron text-center">
-        <h1>Livet</h1>
-        <p>En virkelighetsnær fremstilling av det å være mann-30 i 2019</p>
-    </div>
 
-    <div class="container">
-            <div id="game"></div>
-            <script type="text/javascript" src="https://rawgithub.com/craftyjs/Crafty/release/dist/crafty-min.js"></script>
-            <script type="text/javascript" src="assets/js/Game.js"></script>
-        
+    <div id="body">
+    <h3>
+        Livet
+        <small class="text-muted">– en reise fra begynnelse til slutt med mange ting i fleisen.</small>
+    </h3>
+    <p>
+        "Livet er det som skjer mens du er opptatt med å legge andre planer", sier folk. Det tror ikke vi noe på. 
+        Livet er en reise fra begynnelse til slutt med masse dritt imellom. I dette spillet er meningen at du skal
+        konfrontere og unngå dritten, og ikke la den treffe deg i fleisen. 
+        <br><br>
+        Ser du denne karen?
+    </p>
+
+    <img src="assets/img/staa_front.png" alt="1" width="100">
+    <img src="assets/img/staa.png" alt="2" width="100">
+    <img src="assets/img/gaa.png" alt="3" width="100">
+    <img src="assets/img/hopp.png" alt="4" width="100">
+
+    <script>
+            $(document).ready(function(){
+                let img = $("img");
+                img.css({opacity: 0.5});
+                img.hover(function(){
+                    $(this).css({opacity: 1});
+                },function(){
+                    $(this).css({opacity: 0.5});
+                })
+            });
+    </script>
+
+    <p>
+        Dette er deg. I spillet går du gjennom livet ditt.
+    </p>
+
     </div>
 
 </body>
