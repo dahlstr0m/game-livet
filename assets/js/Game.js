@@ -144,7 +144,7 @@ Crafty.defineScene("startSkjerm", function() {
             .textFont({size:'40px'})
             .css({"text-align": "right"})
             .textColor("#FFFFFF")
-            .text("0 livspoeng");
+            .text(poeng.toFixed(0).toString() + " livspoeng");
 });
 
 //Definerer spillet
@@ -159,12 +159,8 @@ Crafty.defineScene("spillet", function() {
             }
           }, 100);
         setInterval(function () {
-          if (dod===true){    //Spawn nye så lenge ikke død
-            poengTavle();
-          }else{
             spawnBakke();
             spawnFiendlig();
-        }
           }, 1000);
 
         // Bakken som spilleren løper på 2. nivå
@@ -191,7 +187,7 @@ Crafty.defineScene("spillet", function() {
               randomBakkebredde = randomBakkebredde*3.5;
 
                 //Generer bakke/gulv
-                Crafty.e("Floor, 2D, Canvas, Color, Collision, andreEtg")
+                Crafty.e("Floor, 2D, Canvas, Color, Collision, andreEtg, Persist")
                   .attr({x: 1050, y: 300, w: randomBakkebredde, h: 15, hSpeed: -2})
                   .color('black')
                   .bind('EnterFrame', function() {
@@ -200,22 +196,30 @@ Crafty.defineScene("spillet", function() {
                   }
                   })
                 //Generer kolisjonbarriere for underside og front av bakke/gulv
-                Crafty.e("2D, Canvas, Color, Collision, undersideGulv")
+                Crafty.e("2D, Canvas, Color, Collision, undersideGulv, Persist")
                   .attr({x: 1050, y: 315, w: randomBakkebredde, h: 5, hSpeed: -2})
-                  .color('green')
+                  .color('black')
                   .bind('EnterFrame', function() {
                     if (dod===false){
                     this.x += this.hSpeed;
                   }
                   })
-                Crafty.e("2D, Canvas, Color, Collision, fremsideGulv")
+                Crafty.e("2D, Canvas, Color, Collision, fremsideGulv, Persist")
                   .attr({x: 1045, y: 301, w: 5, h: 19, hSpeed: -2})
-                  .color('green')
+                  .color('black')
                   .bind('EnterFrame', function() {
                     if (dod===false){
                     this.x += this.hSpeed;
                   }
                   })
+                  Crafty.e("2D, Canvas, Color, Collision, Persist") //Den manglende pixelen
+                    .attr({x: 1045, y: 300, w: 5, h: 1, hSpeed: -2})
+                    .color('black')
+                    .bind('EnterFrame', function() {
+                      if (dod===false){
+                      this.x += this.hSpeed;
+                    }
+                    })
 
                 //Oppdater array med alle andreEtg bakker/gulv
                 bakkeIder = Crafty("andreEtg").toArray();
@@ -264,11 +268,12 @@ Crafty.defineScene("spillet", function() {
                      randomY += 1000; //Utenfor skjermen
                }
                //Generer det fiendlige objektet
-                Crafty.e("2D, Canvas, Color, Collision, FiendtligObjekt")
+                Crafty.e("2D, Canvas, Color, Collision, FiendtligObjekt, Persist")
                   .attr({x: 1050, y: randomY, w: 40, h: 40, hSpeed: -4, rotation: 45})
                   .checkHits()
                   .onHit("spiller", function(){
                     dod=true;
+                    Crafty.enterScene("score");
                     Crafty("spiller").destroy();
                   })
                   .onHit("VeggDestroy", function() { // Fjern objektet når det treffer bakveggen
@@ -291,29 +296,85 @@ Crafty.defineScene("spillet", function() {
           Crafty("timerText").text((time/1000).toFixed(3).toString() + " sek");
         }
 
-        // Poengteller, gir gitt mengde poeng per intervall.
-        var poeng = 0;
-        // Kan brukes til å øke hastigheten på økningen av poeng, feks når man passerer en viss poenggrense.
-        var poengMultiplier = 1.5;
+        // Poengteller, gir gitt mengde poeng per interval
+          // Kan brukes til å øke hastigheten på økningen av poeng, feks når man passerer en viss poenggrense.
+          var poengMultiplier = 1.5;
         function poengUpdate () {
           poeng += 1 * poengMultiplier;
           Crafty("poengText").text(poeng.toFixed(0).toString() + " livspoeng");
         }
-
-      function poengTavle(){
-        Crafty.e("2D, Canvas, Color, poengTavle")
-          .attr({x: 300, y: 100, w: 400, h: 500})
-          .color('white');
-      }
-
 }); //Avslutt define spillet
 
 //Definerer scorescene
 Crafty.defineScene("score", function() {
 
+  //bakgrunn
+  Crafty.e("2D, Canvas, Color, poengTavle")
+    .attr({alpha:0.7, x: 300, y: 100, w: 400, h: 500})
+    .color('white');
+
+    //tittel
+    Crafty.e("2D, DOM, Text")
+      .attr({w:350, h:50, x: 325, y: 120})
+      .textFont({size:'40px'})
+      .css({"text-align": "center"})
+      .textColor("black")
+      .text("Game over");
+    //Tekst
+    Crafty.e("2D, DOM, Text")
+      .attr({w:300, h:400, x: 350, y: 200})
+      .textFont({size:'40px'})
+      .css({"text-align": "left"})
+      .textColor("black")
+      .text("Du klarte i løpet av din levetid å opparbeide deg " + poeng.toFixed(0).toString() + " livspoeng.");
+    //Vittig kommentar
+    Crafty.e("2D, DOM, Text")
+      .attr({w:350, h:100, x: 325, y: 400})
+      .textFont({size:'27px'})
+      .css({"text-align": "center"})
+      .textColor("black")
+      .text("Lykke til i det virkelige liv!");
+    //Restart tekst og ramme
+    Crafty.e("2D, DOM, Text, Mouse, restart")
+        .attr({ w: 350, h: 50, x: 325, y: 475 })
+        .text("Prøv igjen")
+        .textFont({size:'40px', weight:'bold'})
+        .css({"text-align": "center"})
+        .textColor("black")
+        .bind('Click', function(MouseEvent){
+          restart();
+        });
+    Crafty.e("2D, Canvas, Color, poengTavle")
+      .attr({alpha:0.7, x: 375, y: 475, w: 250, h: 50})
+      .color('white');
+
+    function restart(){
+      /*
+      let persistIder = Crafty("FiendtligObjekt").toArray();
+      let persistId;
+      for (persistId of persistIder) {
+        //Crafty(persistId).destroy;
+        Crafty("FiendtligObjekt").get(persistId).destroy();
+      }
+      //destroy all Persist
+      */
+      alert("har ikke fått sletta alt tidligere ennå");
+      Crafty.enterScene("startSkjerm");           //Start forfra
+    }
+    //Toppscorer tekst
+    Crafty.e("2D, DOM, Text, Mouse, restart")
+        .attr({ w: 350, h: 160, x: 325, y: 540 })
+        .text("Sjekk toppscorer-lista")
+        .textFont({size:'20px', weight:'bold'})
+        .css({"text-align": "center"})
+        .textColor("black")
+        .bind('Click', function(MouseEvent){
+          alert("Toppscorer kommer");
+        });
 
 
-}); //Avslutt define dode
+}); //Avslutt definisjon av scorescene
 
-//Kjør spillet
+//Gå til startskjerm
+let poeng = 0;
 Crafty.enterScene("startSkjerm");
