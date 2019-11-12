@@ -26,32 +26,26 @@ let dod = false;
 
 Crafty.createLayer("SkylineLayer", "Canvas",{z:0})
 Crafty.e("2D, Skyline, SkylineLayer, Image, Persist")
-    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.5})
+    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.20})
     .image("assets/img/livet_skyline.png", "repeat")
-    .bind('EnterFrame', function() {
-      if (dod===false){
+    .bind("EnterFrame", function() {
       this.x += this.hSpeed;
-    }
     });
 
 Crafty.createLayer("MiddleLayer", "Canvas",{z:1})
 Crafty.e("2D, Middle, MiddleLayer, Image, Persist")
-    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -1})
+    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.30})
     .image("assets/img/livet_middle.png", "repeat")
-    .bind('EnterFrame', function() {
-      if (dod===false){
+    .bind("EnterFrame", function() {
       this.x += this.hSpeed;
-    }
     });
 
 Crafty.createLayer("ForegroundLayer", "Canvas",{z:2})
 Crafty.e("2D, Foreground, ForegroundLayer, Image, Persist")
-    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -1.5})
+    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.50})
     .image("assets/img/livet_foreground.png", "repeat")
-    .bind('EnterFrame', function() {
-      if (dod===false){
+    .bind("EnterFrame", function() {
       this.x += this.hSpeed;
-    }
     });
 
 // Definerer Startskjerm
