@@ -21,21 +21,38 @@ Crafty.map.boundaries({min: {x:0, y:0}, max: {x:1000, y:700}})
 // Fast bakgrunn.
 Crafty.background("#7DDEEF url(assets/img/livet_background.png) repeat center center");
 
-// Bakgrunnsby i ulike lag.
+// Bakgrunnsby i ulike lag, med ulik fart
+let dod = false;
+
 Crafty.createLayer("SkylineLayer", "Canvas",{z:0})
-Crafty.e("2D, SkylineLayer, Image, Persist")
-    .attr({w: Crafty.viewport.width, h: Crafty.viewport.height})
-    .image("assets/img/livet_skyline.png", "no-repeat");
+Crafty.e("2D, Skyline, SkylineLayer, Image, Persist")
+    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.5})
+    .image("assets/img/livet_skyline.png", "repeat")
+    .bind('EnterFrame', function() {
+      if (dod===false){
+      this.x += this.hSpeed;
+    }
+    });
 
 Crafty.createLayer("MiddleLayer", "Canvas",{z:1})
-Crafty.e("2D, SkylineLayer, Image, Persist")
-    .attr({w: Crafty.viewport.width, h: Crafty.viewport.height})
-    .image("assets/img/livet_middle.png", "no-repeat");
+Crafty.e("2D, Middle, MiddleLayer, Image, Persist")
+    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -1})
+    .image("assets/img/livet_middle.png", "repeat")
+    .bind('EnterFrame', function() {
+      if (dod===false){
+      this.x += this.hSpeed;
+    }
+    });
 
 Crafty.createLayer("ForegroundLayer", "Canvas",{z:2})
-Crafty.e("2D, SkylineLayer, Image, Persist")
-    .attr({w: Crafty.viewport.width, h: Crafty.viewport.height})
-    .image("assets/img/livet_foreground.png", "no-repeat");
+Crafty.e("2D, Foreground, ForegroundLayer, Image, Persist")
+    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -1.5})
+    .image("assets/img/livet_foreground.png", "repeat")
+    .bind('EnterFrame', function() {
+      if (dod===false){
+      this.x += this.hSpeed;
+    }
+    });
 
 // Definerer Startskjerm
 Crafty.defineScene("startSkjerm", function() {
