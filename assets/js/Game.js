@@ -298,8 +298,9 @@ Crafty.defineScene("spillet", function() {
                      randomY += 1000; //Utenfor skjermen
                }
                //Generer det fiendlige objektet
-                Crafty.e("2D, Canvas, Color, Collision, FiendtligObjekt, Persist")
-                  .attr({x: 1050, y: randomY, w: 40, h: 40, hSpeed: -4, rotation: 45})
+                Crafty.e("2D, Canvas, Image, Collision, FiendtligObjekt, Persist")
+                  .attr({x: 1050, y: randomY, w: 30, h: 40, hSpeed: -4, rotation: 0})
+                  .origin("center")
                   .checkHits()
                   .onHit("spiller", function(){
                     dod=true;
@@ -309,10 +310,11 @@ Crafty.defineScene("spillet", function() {
                   .onHit("VeggDestroy", function() { // Fjern objektet når det treffer bakveggen
                     this.destroy();
                   })
-                  .color('orange')
+                  .image("assets/img/fiende1.png", "no-repeat")
                   .bind('EnterFrame', function() {
                     if (dod===false){
                     this.x += this.hSpeed;
+                    this.rotation += 1;
                   }
                   })
             };
