@@ -3,7 +3,7 @@
     let bgData = document.getElementById('game');
     let div = document.createElement('div');
     div.innerHTML = '<p id="bgDataL1"></p>';
-    div.style ="display:none;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
+    div.style ="display:block;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
     div.id = "bgData"
     bgData.appendChild(div);
 
@@ -15,6 +15,23 @@
 // Initialiser spillet, angi størrelse på spillvindu.
 Crafty.init(1000,700, document.getElementById('game'));
 
+// Last inn spiller, definer sprites.
+var game_assets = {
+    "sprites": {
+      "assets/img/sprites.png": {
+        tile: 68,
+        tileh: 125,
+        map: {
+          spiller_idle: [3, 0],
+          spiller_walking: [2, 0],
+          spiller_jumping: [1, 0],
+        }
+      }
+    }
+};
+
+Crafty.load(game_assets);
+
 // Boundaries for brettet.
 Crafty.map.boundaries({min: {x:0, y:0}, max: {x:1000, y:700}})
 
@@ -22,8 +39,6 @@ Crafty.map.boundaries({min: {x:0, y:0}, max: {x:1000, y:700}})
 Crafty.background("#7DDEEF url(assets/img/livet_background.png) repeat center center");
 
 // Bakgrunnsby i ulike lag, med ulik fart
-let dod = false;
-
 Crafty.createLayer("SkylineLayer", "Canvas",{z:0})
 Crafty.e("2D, Skyline, SkylineLayer, Image, Persist")
     .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.20})
@@ -61,101 +76,105 @@ Crafty.defineScene("startSkjerm", function() {
         Crafty.enterScene("spillet");           //Start spillet
       });
 
-      // Spiller
-      Crafty.e('2D, Canvas, Color, Twoway, Gravity, Collision, spiller, Persist')
-        .attr({x: 200, y: 225, w: 75, h: 125, hoppi: 0})
-        .color('#F00')
-        .twoway(200)
-        .gravity('Floor')
-        .checkHits('Vegg,VeggMidt, Floor')
-        .onHit("Vegg", function(){
-          this.x=0;
-        })
-        .onHit("VeggMidt", function(){
-          this.x=726;
-        })
-        .onHit("Floor", function(){
-          this.hoppi = 0;
-      //    this.rotation = 0;        //Tryn/fall
-        })
-        .onHit("starter", function(){
-          Crafty.enterScene("spillet");       //Start spillet
-        })
-        .onHit("undersideGulv", function(){
-          this.y=320;
-          this.hoppi = 3;           //Tryn/fall
-        //  this.rotation = 45;       //Tryn/fall
-        })
-        .onHit("fremsideGulv", function(){
-          this.x=this.x-2;
-          this.y=this.y+2;
-        })
-        //Kun tillatt dobbelhopp
-          .bind("CheckJumping",function(){
-            this.jumpspeed = 150;
-            this.canJump = true;
-            if(this.hoppi==0){
-              this.hoppi++;
-              this.canJump = true;
-            }else if (this.hoppi==1) {
-                this.canJump = true;
-                this.hoppi++;
-            }else{
-              if (this.y==475) {
-                  this.hoppi=0;
-              }else{
-                this.canJump = false;
-              }
-            }
+// Spilleren, definisjon av kollisjon med objekter.
+var spiller = Crafty.e('2D, Canvas, Image, Twoway, Gravity, Collision, spiller, spiller_idle, Persist')
+  .attr({x: 200, y: 225, w: 65, h: 125, hoppi: 0})
 
-        });
+// Laster inn bilde fra spritemap i stedet for direkte på entitet.
+//.image("assets/img/staa.png", "no-repeat") 
+  .twoway(200)
+  .gravity('Floor')
+  .checkHits('Vegg, VeggMidt, Floor')
+  .onHit("Vegg", function() {
+    this.x=0;
+  })
+  .onHit("VeggMidt", function(){
+    this.x=726;
+  })
+  .onHit("Floor", function(){
+    this.hoppi = 0;
+//  this.rotation = 0;        //Tryn/fall
+  })
+  .onHit("starter", function(){
+    Crafty.enterScene("spillet");       // Start spillet
+  })
+  .onHit("undersideGulv", function(){
+    this.y=320;
+    this.hoppi = 3;           //Tryn/fall
+//  this.rotation = 45;       //Tryn/fall
+  })
+  .onHit("fremsideGulv", function(){
+    this.x=this.x-2;
+    this.y=this.y+2;
+  })
+        
+// Kun tillatt dobbelhopp
+  .bind("CheckJumping", function() {
+  this.jumpspeed = 150;
+  this.canJump = true;
+  if (this.hoppi==0) {
+      this.hoppi++;
+      this.canJump = true;
+  } else if (this.hoppi==1) {
+      this.canJump = true;
+      this.hoppi++;
+  } else {
+      if (this.y==475) {
+          this.hoppi=0;
+      } else {
+          this.canJump = false;
+          }
+      }
+  });
 
-        // Bakken som spilleren løper på.
-        Crafty.e('Floor, 2D, Canvas, Color, Collision, Persist')
-          .attr({x: 0, y: 600, w: 1000, h: 100})
-          .color('#303030');
+// Bakken som spilleren løper på.
+var ground = Crafty.e('Floor, 2D, Canvas, Color, Collision, Persist')
+  .attr({x: 0, y: 600, w: 1000, h: 100})
+  .color('#303030');
 
-          // Vegger
-          Crafty.e("2D, Canvas, Color, Vegg, Persist")
-            .attr({
-              x: 0,
-              y: 0,
-              w: 1,
-              h: 700
-            })
-            .color('black');
-          Crafty.e("2D, Canvas, Color, VeggMidt, Persist")
-            .attr({
-              x: 800,
-              y: 0,
-              w: 1,
-              h: 700
-            })
-            .color('black');
-          Crafty.e("2D, Canvas, Color, VeggDestroy, Persist")
-            .attr({
-              x: -100,
-              y: -500,
-              w: 1,
-              h: 2000
-            })
-            .color('black');
+// Vegger
+  Crafty.e("2D, Canvas, Color, Vegg, Persist")
+  .attr({
+    x: 0,
+    y: 0,
+    w: 1,
+    h: 700
+  })
+  .color('black');
+          
+  Crafty.e("2D, Canvas, Color, VeggMidt, Persist")
+  .attr({
+    x: 800,
+    y: 0,
+    w: 1,
+    h: 700
+  })
+  .color('black');
+          
+  Crafty.e("2D, Canvas, Color, VeggDestroy, Persist")
+  .attr({
+    x: -100,
+    y: -500,
+    w: 1,
+    h: 2000
+  })
+  .color('black');
 
-          //Timer tekst
-          Crafty.e("2D, DOM, Text, timerText, Persist")
-            .attr({ w:700, h:50, x: 250, y: 15})
-            .textFont({size:'40px', weight:'bold'})
-            .css({"text-align": "right"})
-            .textColor("#FFFFFF")
-            .text("0.000 sek");
+// Timertekst
+Crafty.e("2D, DOM, Text, timerText, Persist")
+  .attr({ w:700, h:50, x: 250, y: 15})
+  .textFont({size:'40px', weight:'bold'})
+  .css({"text-align": "right"})
+  .textColor("#FFFFFF")
+  .text("0.000 sek");
 
-          //Poengtekst
-          Crafty.e("2D, DOM, Text, poengText, Persist")
-            .attr({w:700, h:50, x: 250, y: 60})
-            .textFont({size:'40px'})
-            .css({"text-align": "right"})
-            .textColor("#FFFFFF")
-            .text(poeng.toFixed(0).toString() + " livspoeng");
+// Poengtekst
+Crafty.e("2D, DOM, Text, poengText, Persist")
+  .attr({w:700, h:50, x: 250, y: 60})
+  .textFont({size:'40px'})
+  .css({"text-align": "right"})
+  .textColor("#FFFFFF")
+  .text(poeng.toFixed(0).toString() + " livspoeng");
 });
 
 //Definerer spillet
