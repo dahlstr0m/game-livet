@@ -9,7 +9,7 @@
 
     setInterval(bgDataOppdater, 100);
     function bgDataOppdater() {
-     document.getElementById("bgDataL1").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1) + ' ___hoppi: '+Crafty("spiller").hoppi;
+     document.getElementById("bgDataL1").innerText = "_  X: "+ Crafty("spiller").x.toFixed(1) + ' , ' + "Y: " + Crafty("spiller").y.toFixed(1) + ' ___hoppi: '+Crafty("spiller").hoppi + "  flipped: " + Crafty("spiller").flipped;
     }
 
 // Initialiser spillet, angi størrelse på spillvindu.
@@ -19,12 +19,13 @@ Crafty.init(1000,700, document.getElementById('game'));
 var game_assets = {
     "sprites": {
       "assets/img/sprites.png": {
-        tile: 68,
+        tile: 67.5,
         tileh: 125,
         map: {
           spiller_idle: [3, 0],
           spiller_walking: [2, 0],
           spiller_jumping: [1, 0],
+          spiller_standing: [0, 0]
         }
       }
     }
@@ -78,7 +79,7 @@ Crafty.defineScene("startSkjerm", function() {
 
 // Spilleren, definisjon av kollisjon med objekter.
 var spiller = Crafty.e('2D, Canvas, Image, Twoway, Gravity, Collision, spiller, spiller_idle, Persist')
-  .attr({x: 200, y: 225, w: 65, h: 125, hoppi: 0})
+  .attr({x: 200, y: 225, w: 65, h: 125, hoppi: 0, flipped: 0})
 
 // Laster inn bilde fra spritemap i stedet for direkte på entitet.
 //.image("assets/img/staa.png", "no-repeat") 
@@ -126,6 +127,39 @@ var spiller = Crafty.e('2D, Canvas, Image, Twoway, Gravity, Collision, spiller, 
           }
       }
   });
+
+// Animer spiller når han går og hopper. Flipper sprite når han går til venstre, og tilbake igjen hvis den har blitt flippet.
+spiller.bind("KeyDown", function(e) {
+    if (e.key == Crafty.keys.RIGHT_ARROW) {
+      if (spiller.flipped === 1) {
+        this.sprite("spiller_walking");
+        this.unflip("X");
+        spiller.flipped = 0;
+      } else {
+        this.sprite("spiller_walking");
+      }
+    } else if (e.key == Crafty.keys.LEFT_ARROW) {
+      this.sprite("spiller_walking");
+      this.flip("X");
+      spiller.flipped = 1;
+    } else if (e.key == Crafty.keys.UP_ARROW) {
+      this.sprite("spiller_jumping");
+    }
+  });
+
+// Returnerer til stående posisjon når spilleren ikke går.
+spiller.bind("KeyUp", function(e) {
+    if (e.key == Crafty.keys.RIGHT_ARROW) {
+        this.sprite("spiller_standing");
+    } else if (e.key == Crafty.keys.LEFT_ARROW) {
+      this.sprite("spiller_standing");
+    }
+});
+
+// Returnerer til idle når spilleren lander på bakken.
+spiller.bind("LandedOnGround", function(){
+  this.sprite("spiller_idle");
+});
 
 // Bakken som spilleren løper på.
 var ground = Crafty.e('Floor, 2D, Canvas, Color, Collision, Persist')
