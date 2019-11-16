@@ -128,7 +128,8 @@ var spiller = Crafty.e('2D, Canvas, Image, Twoway, Gravity, Collision, spiller, 
       }
   });
 
-// Animer spiller når han går og hopper. Flipper sprite når han går til venstre, og tilbake igjen hvis den har blitt flippet.
+// Animer spiller når han går og hopper. Implementert for både WASD og piltaster.
+// Flipper sprite når han går til venstre, og tilbake igjen hvis den har blitt flippet.
 spiller.bind("KeyDown", function(e) {
     if (e.key == Crafty.keys.RIGHT_ARROW) {
       if (spiller.flipped === 1) {
@@ -144,8 +145,30 @@ spiller.bind("KeyDown", function(e) {
       spiller.flipped = 1;
     } else if (e.key == Crafty.keys.UP_ARROW) {
       this.sprite("spiller_jumping");
+    } else if (e.key == Crafty.keys.DOWN_ARROW) {
+      this.sprite("spiller_idle");
     }
   });
+
+spiller.bind("KeyDown", function(e) {
+    if (e.key == Crafty.keys.D) {
+      if (spiller.flipped === 1) {
+        this.sprite("spiller_walking");
+        this.unflip("X");
+        spiller.flipped = 0;
+      } else {
+        this.sprite("spiller_walking");
+      }
+    } else if (e.key == Crafty.keys.A) {
+      this.sprite("spiller_walking");
+      this.flip("X");
+      spiller.flipped = 1;
+    } else if (e.key == Crafty.keys.W) {
+      this.sprite("spiller_jumping");
+    } else if (e.key == Crafty.keys.S) {
+      this.sprite("spiller_idle");
+    }
+});
 
 // Returnerer til stående posisjon når spilleren ikke går.
 spiller.bind("KeyUp", function(e) {
@@ -154,6 +177,14 @@ spiller.bind("KeyUp", function(e) {
     } else if (e.key == Crafty.keys.LEFT_ARROW) {
       this.sprite("spiller_standing");
     }
+});
+
+spiller.bind("KeyUp", function(e) {
+  if (e.key == Crafty.keys.D) {
+      this.sprite("spiller_standing");
+  } else if (e.key == Crafty.keys.A) {
+    this.sprite("spiller_standing");
+  }
 });
 
 // Returnerer til idle når spilleren lander på bakken.
