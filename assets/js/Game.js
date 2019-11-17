@@ -82,7 +82,7 @@ var spiller = Crafty.e('2D, Canvas, Image, Twoway, Gravity, Collision, spiller, 
   .attr({x: 200, y: 225, w: 65, h: 125, hoppi: 0, flipped: 0})
 
 // Laster inn bilde fra spritemap i stedet for direkte på entitet.
-//.image("assets/img/staa.png", "no-repeat") 
+//.image("assets/img/staa.png", "no-repeat")
   .twoway(200)
   .gravity('Floor')
   .checkHits('Vegg, VeggMidt, Floor')
@@ -108,7 +108,7 @@ var spiller = Crafty.e('2D, Canvas, Image, Twoway, Gravity, Collision, spiller, 
     this.x=this.x-2;
     this.y=this.y+2;
   })
-        
+
 // Kun tillatt dobbelhopp
   .bind("CheckJumping", function() {
   this.jumpspeed = 150;
@@ -206,7 +206,7 @@ var ground = Crafty.e('Floor, 2D, Canvas, Color, Collision, Persist')
     h: 700
   })
   .color('black');
-          
+
   Crafty.e("2D, Canvas, Color, VeggMidt, Persist")
   .attr({
     x: 800,
@@ -215,7 +215,7 @@ var ground = Crafty.e('Floor, 2D, Canvas, Color, Collision, Persist')
     h: 700
   })
   .color('black');
-          
+
   Crafty.e("2D, Canvas, Color, VeggDestroy, Persist")
   .attr({
     x: -100,
@@ -254,8 +254,10 @@ Crafty.defineScene("spillet", function() {
             }
           }, 100);
         setInterval(function () {
+          if (dod===false){ //oppdater tid og poeng så lenge ikke død
             spawnBakke();
             spawnFiendlig();
+          }
           }, 1000);
 
         // Bakken som spilleren løper på 2. nivå
@@ -307,7 +309,7 @@ Crafty.defineScene("spillet", function() {
                     this.x += this.hSpeed;
                   }
                   })
-                  Crafty.e("2D, Canvas, Color, Collision, Persist") //Den manglende pixelen
+                  Crafty.e("2D, Canvas, Color, Collision, manglendePixelenGulv, Persist") //Den manglende pixelen
                     .attr({x: 1045, y: 300, w: 5, h: 1, hSpeed: -2})
                     .color('black')
                     .bind('EnterFrame', function() {
@@ -375,12 +377,10 @@ Crafty.defineScene("spillet", function() {
                   .onHit("VeggDestroy", function() { // Fjern objektet når det treffer bakveggen
                     this.destroy();
                   })
-                  .image("assets/img/fiende1.png", "no-repeat")
+                  .image("assets/img/fiende"+Math.floor(((Math.random()*3)+1))+".png", "no-repeat")
                   .bind('EnterFrame', function() {
-                    if (dod===false){
                     this.x += this.hSpeed;
                     this.rotation += 1;
-                  }
                   })
             };
 
@@ -446,16 +446,18 @@ Crafty.defineScene("score", function() {
       .color('white');
 
     function restart(){
-      /*
-      let persistIder = Crafty("FiendtligObjekt").toArray();
-      let persistId;
-      for (persistId of persistIder) {
-        //Crafty(persistId).destroy;
-        Crafty("FiendtligObjekt").get(persistId).destroy();
+      let bakkerArr = Crafty("andreEtg").toArray();
+      let antBakker = bakkerArr.length-1;
+      for (i = 0; i <= antBakker; i++) {
+        Crafty("andreEtg").get(i).destroy();
+        Crafty("fremsideGulv").get(i).destroy();
+        Crafty("undersideGulv").get(i).destroy();
+        Crafty("manglendePixelenGulv").get(i).destroy();
       }
-      //destroy all Persist
-      */
-      alert("har ikke fått sletta alt tidligere ennå");
+      Crafty("timerText").destroy();
+      Crafty("poengText").destroy();
+      poeng=0;
+
       Crafty.enterScene("startSkjerm");           //Start forfra
     }
     //Toppscorer tekst
@@ -472,6 +474,6 @@ Crafty.defineScene("score", function() {
 
 }); //Avslutt definisjon av scorescene
 
-//Gå til startskjerm
+//Gå til startskjer
 let poeng = 0;
 Crafty.enterScene("startSkjerm");
