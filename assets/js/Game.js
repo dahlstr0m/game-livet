@@ -278,6 +278,9 @@ Crafty.defineScene("spillet", function() {
                 //Slett forrige bakke, hopp over om default verdi
                 if (posisjonSisteBakke!=-1000000){
                 Crafty("andreEtg").get(bakkeIder.length-1).destroy();
+                Crafty("undersideGulv").get(bakkeIder.length-1).destroy();
+                Crafty("fremsideGulv").get(bakkeIder.length-1).destroy();
+                Crafty("manglendePixelenGulv").get(bakkeIder.length-1).destroy();
               }
               //Kalkuler bredde
               randomBakkebredde = Math.floor(((Math.random()*250)+200));
