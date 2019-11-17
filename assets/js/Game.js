@@ -456,10 +456,18 @@ Crafty.defineScene("score", function() {
       }
       Crafty("timerText").destroy();
       Crafty("poengText").destroy();
+      Crafty("Vegg").destroy();
+      Crafty("VeggMidt").destroy();
+      Crafty("floor").destroy();
+      Crafty("VeggDestroy").destroy();
+      Crafty("bakveggen").destroy();
       poeng=0;
 
       Crafty.enterScene("startSkjerm");           //Start forfra
     }
+
+    //legge til topscorer?
+    /*
     //Toppscorer tekst
     Crafty.e("2D, DOM, Text, Mouse, restart")
         .attr({ w: 350, h: 160, x: 325, y: 540 })
@@ -468,9 +476,13 @@ Crafty.defineScene("score", function() {
         .css({"text-align": "center"})
         .textColor("black")
         .bind('Click', function(MouseEvent){
-          alert("Toppscorer kommer");
+          displayTopscorer();
         });
 
+    function displayTopscorer(){
+      alert("heyloo");
+    };
+*/
 
 }); //Avslutt definisjon av scorescene
 
