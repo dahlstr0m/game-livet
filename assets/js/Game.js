@@ -269,7 +269,7 @@ setInterval(function () {
   if (dod===false) { //oppdater tid og poeng så lenge ikke død
     spawnFiendlig();
   }
-}, 1000-(poeng/30));
+}, 1000);
 
 // Bakken som spilleren løper på 2. nivå
 // Definerer variabler
