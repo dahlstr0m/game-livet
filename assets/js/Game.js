@@ -264,13 +264,12 @@ setInterval(function () {
   }
 }, 1000);
 
-// Kjør spawnFiendlig hvert 1000. millisek + en økende del av poengsummen
+// Kjør spawnFiendlig hvert 1000. millisek + en del av poengsummen, slik at vanskelighetsgraden øker
 setInterval(function () {
   if (dod===false) { //oppdater tid og poeng så lenge ikke død
     spawnFiendlig();
-    console.log("Generert nytt objekt");
   }
-}, 1000-(poeng/10));
+}, 1000-(poeng/30));
 
 // Bakken som spilleren løper på 2. nivå
 // Definerer variabler
@@ -414,6 +413,8 @@ Crafty.e("2D, Canvas, Image, Collision, FiendtligObjekt, Persist")
     this.x += this.hSpeed;
     this.rotation += 1;
   })
+
+console.log("Generert nytt objekt");
 };
 
 
