@@ -3,7 +3,7 @@
     let bgData = document.getElementById('game');
     let div = document.createElement('div');
     div.innerHTML = '<p id="bgDataL1"></p>';
-    div.style ="display:block;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
+    div.style ="display:none;"; //----------------------> Endres til "none" for å skjule bakgrunnstall
     div.id = "bgData"
     bgData.appendChild(div);
 
@@ -216,7 +216,7 @@ var ground = Crafty.e('Floor, 2D, Canvas, Color, Collision, Persist')
     w: 1,
     h: 700
   })
-  .color('black');
+  //.color('black');
 
   Crafty.e("2D, Canvas, Color, VeggDestroy, Persist")
   .attr({
@@ -361,7 +361,7 @@ for(var i=0;i<spawnY.length;i++) {
       w: spawnW,
       h: spawnH
     })
-    .color('blue');
+    // .color('blue');
 }
 
 // FiendtligObjekter
