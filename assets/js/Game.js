@@ -39,7 +39,7 @@ Crafty.map.boundaries({min: {x:0, y:0}, max: {x:1000, y:700}})
 // Fast bakgrunn.
 Crafty.background("#7DDEEF url(assets/img/livet_background.png) repeat center center");
 
-// Bakgrunnsby i ulike lag, med ulik fart
+// Bakgrunnsby i ulike lag, med ulik fart. Tre lag.
 Crafty.createLayer("SkylineLayer", "Canvas",{z:0})
 Crafty.e("2D, Skyline, SkylineLayer, Image, Persist")
     .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.20})
@@ -77,7 +77,7 @@ Crafty.defineScene("startSkjerm", function() {
         Crafty.enterScene("spillet");           //Start spillet
       });
 
-// Spilleren, definisjon av kollisjon med objekter.
+// Spilleren, definisjon av kollisjon med objekter som har kollisjon påslått.
 var spiller = Crafty.e('2D, Canvas, Image, Twoway, Gravity, Collision, spiller, spiller_idle, Persist')
   .attr({x: 200, y: 225, w: 65, h: 125, hoppi: 0, flipped: 0})
 
@@ -109,7 +109,7 @@ var spiller = Crafty.e('2D, Canvas, Image, Twoway, Gravity, Collision, spiller, 
     this.y=this.y+2;
   })
 
-// Kun tillatt dobbelhopp
+// Kun tillatt dobbelhopp. Sjekk hvis spiller har hoppet én eller to ganger, og deaktiver hopping deretter.
   .bind("CheckJumping", function() {
   this.jumpspeed = 150;
   this.canJump = true;
@@ -130,6 +130,7 @@ var spiller = Crafty.e('2D, Canvas, Image, Twoway, Gravity, Collision, spiller, 
 
 // Animer spiller når han går og hopper. Implementert for både WASD og piltaster.
 // Flipper sprite når han går til venstre, og tilbake igjen hvis den har blitt flippet.
+// Idle-animasjon dersom spilleren trykker pil ned eller S.
 spiller.bind("KeyDown", function(e) {
     if (e.key == Crafty.keys.RIGHT_ARROW) {
       if (spiller.flipped === 1) {
@@ -197,7 +198,8 @@ var ground = Crafty.e('Floor, 2D, Canvas, Color, Collision, Persist')
   .attr({x: 0, y: 600, w: 1000, h: 100})
   .color('#303030');
 
-// Vegger
+// Vegger som hindrer spilleren fra å hoppe utenfor spillområdet, eller gå for langt fram.
+// VeggDestroy er utenfor det synlige spillområdet og destruerer objekter som treffer det.
   Crafty.e("2D, Canvas, Color, Vegg, Persist")
   .attr({
     x: 0,
@@ -246,163 +248,184 @@ Crafty.e("2D, DOM, Text, poengText, Persist")
 Crafty.defineScene("spillet", function() {
   let dod = false;
 
-        //Oppdater hver klokkefrekvens
-        setInterval(function () {
-            if (dod===false){ //oppdater tid og poeng så lenge ikke død
-              poengUpdate();
-              timerUpdate();
-            }
-          }, 100);
-        setInterval(function () {
-          if (dod===false){ //oppdater tid og poeng så lenge ikke død
-            spawnBakke();
-            spawnFiendlig();
-          }
-          }, 1000);
+//Oppdater hver klokkefrekvens
+setInterval(function () {
+  if (dod===false){ //oppdater tid og poeng så lenge ikke død
+    poengUpdate();
+    timerUpdate();
+    }
+}, 100);
 
-        // Bakken som spilleren løper på 2. nivå
-          //Definerer variabler
-          let bakkeIder,randomBakkebredde,posisjonSisteBakke = -1000000,sluttposisjonSisteBakke;
-          //Spawn bakke
-          function spawnBakke(){
-            //Sjekk om det er første 2.etg som genereres eller om det finnes en fra før
-              //Oppdaterer variablene til siste posisjon om den finnes, ellers "default"
-              if (posisjonSisteBakke==-1000000) { //Default
-                  sluttposisjonSisteBakke = -999; //Default
-              }else{
-                  posisjonSisteBakke = Crafty("andreEtg").get(bakkeIder.length-1).x;
-                  sluttposisjonSisteBakke = randomBakkebredde*-1.15;
-              }
-              //Sjekk om siste bakke/gulv er ute av frame, generer ny
-              if (posisjonSisteBakke <= sluttposisjonSisteBakke){
-                //Slett forrige bakke, hopp over om default verdi
-                if (posisjonSisteBakke!=-1000000){
-                Crafty("andreEtg").get(bakkeIder.length-1).destroy();
-                Crafty("undersideGulv").get(bakkeIder.length-1).destroy();
-                Crafty("fremsideGulv").get(bakkeIder.length-1).destroy();
-                Crafty("manglendePixelenGulv").get(bakkeIder.length-1).destroy();
-              }
-              //Kalkuler bredde
-              randomBakkebredde = Math.floor(((Math.random()*250)+200));
-              randomBakkebredde = randomBakkebredde*3.5;
+setInterval(function () {
+  if (dod===false){ //oppdater tid og poeng så lenge ikke død
+    spawnBakke();
+    spawnFiendlig();
+  }
+}, 1000);
 
-                //Generer bakke/gulv
-                Crafty.e("Floor, 2D, Canvas, Color, Collision, andreEtg, Persist")
-                  .attr({x: 1050, y: 300, w: randomBakkebredde, h: 15, hSpeed: -2})
-                  .color('black')
-                  .bind('EnterFrame', function() {
-                    if (dod===false){
-                    this.x += this.hSpeed;
-                  }
-                  })
-                //Generer kolisjonbarriere for underside og front av bakke/gulv
-                Crafty.e("2D, Canvas, Color, Collision, undersideGulv, Persist")
-                  .attr({x: 1050, y: 315, w: randomBakkebredde, h: 5, hSpeed: -2})
-                  .color('black')
-                  .bind('EnterFrame', function() {
-                    if (dod===false){
-                    this.x += this.hSpeed;
-                  }
-                  })
-                Crafty.e("2D, Canvas, Color, Collision, fremsideGulv, Persist")
-                  .attr({x: 1045, y: 301, w: 5, h: 19, hSpeed: -2})
-                  .color('black')
-                  .bind('EnterFrame', function() {
-                    if (dod===false){
-                    this.x += this.hSpeed;
-                  }
-                  })
-                  Crafty.e("2D, Canvas, Color, Collision, manglendePixelenGulv, Persist") //Den manglende pixelen
-                    .attr({x: 1045, y: 300, w: 5, h: 1, hSpeed: -2})
-                    .color('black')
-                    .bind('EnterFrame', function() {
-                      if (dod===false){
-                      this.x += this.hSpeed;
-                    }
-                    })
+// Bakken som spilleren løper på 2. nivå
+// Definerer variabler
+let bakkeIder,randomBakkebredde,posisjonSisteBakke = -1000000,sluttposisjonSisteBakke;
+          
+//Spawn bakke
+function spawnBakke(){
+            
+//Sjekk om det er første 2.etg som genereres eller om det finnes en fra før
+//Oppdaterer variablene til siste posisjon om den finnes, ellers "default"
+  if (posisjonSisteBakke==-1000000) { //Default
+      sluttposisjonSisteBakke = -999; //Default
+  } else {
+      posisjonSisteBakke = Crafty("andreEtg").get(bakkeIder.length-1).x;
+      sluttposisjonSisteBakke = randomBakkebredde*-1.15;
+  }
+              
+//Sjekk om siste bakke/gulv er ute av frame, generer ny
+  if (posisjonSisteBakke <= sluttposisjonSisteBakke){
+                
+//Slett forrige bakke, hopp over om default verdi
+  if (posisjonSisteBakke!=-1000000){
+  Crafty("andreEtg").get(bakkeIder.length-1).destroy();
+  Crafty("undersideGulv").get(bakkeIder.length-1).destroy();
+  Crafty("fremsideGulv").get(bakkeIder.length-1).destroy();
+  Crafty("manglendePixelenGulv").get(bakkeIder.length-1).destroy();
+  }
+              
+//Kalkuler bredde på svevende gulv.
+  randomBakkebredde = Math.floor(((Math.random()*250)+200));
+  randomBakkebredde = randomBakkebredde*3.5;
 
-                //Oppdater array med alle andreEtg bakker/gulv
-                bakkeIder = Crafty("andreEtg").toArray();
-                posisjonSisteBakke = Crafty("andreEtg").get(bakkeIder.length-1).x;
-              }
-        }
-        //spawn area
-          let spawnY = [20, 160, 340, 480];
-          let spawnX = 985;
-          let spawnW = 15;
-          let spawnH = 120
-          //Generer fire spawnAreas fra array spawnY
-          for(var i=0;i<spawnY.length;i++){
-            Crafty.e("2D, Canvas, Color")
-              .attr({
-              x: spawnX,
-              y: spawnY[i],
-              w: spawnW,
-              h: spawnH
-              })
-              .color('blue');
-          }
+//Generer bakke/gulv
+Crafty.e("Floor, 2D, Canvas, Color, Collision, andreEtg, Persist")
+  .attr({x: 1050, y: 300, w: randomBakkebredde, h: 15, hSpeed: -2})
+  .color('black')
+  .bind('EnterFrame', function() {
+    if (dod===false){
+    this.x += this.hSpeed;
+    }
+  })
+                
+//Generer kolisjonbarriere for underside og front av bakke/gulv
+Crafty.e("2D, Canvas, Color, Collision, undersideGulv, Persist")
+  .attr({x: 1050, y: 315, w: randomBakkebredde, h: 5, hSpeed: -2})
+  .color('black')
+  .bind('EnterFrame', function() {
+    if (dod===false){
+    this.x += this.hSpeed;
+    }
+  })
+                
+Crafty.e("2D, Canvas, Color, Collision, fremsideGulv, Persist")
+  .attr({x: 1045, y: 301, w: 5, h: 19, hSpeed: -2})
+  .color('black')
+  .bind('EnterFrame', function() {
+    if (dod===false) {
+    this.x += this.hSpeed;
+    }
+  })
+                  
+Crafty.e("2D, Canvas, Color, Collision, manglendePixelenGulv, Persist") //Den manglende pixelen
+  .attr({x: 1045, y: 300, w: 5, h: 1, hSpeed: -2})
+  .color('black')
+  .bind('EnterFrame', function() {
+    if (dod===false) {
+    this.x += this.hSpeed;
+    }
+  })
 
-        // FiendtligObjekter
-            let randomY = 0;
-            let randomspawn;
-            //Spawn fiender funksjon
-            function spawnFiendlig(){
-               randomY = Math.floor((Math.random()*68)+2);
-               randomspawn = Math.floor(((Math.random()*5)+1));
-               //Select spawn
-               switch(randomspawn) {
-                 case 1:
-                    randomY +=spawnY[1];
-                 break;
-                 case 2:
-                    randomY += spawnY[2];
-                 break;
-                 case 3:
-                    randomY += spawnY[3];
-                 break;
-                 case 4:
-                     randomY += spawnY[4];
-                 break;
-                 default:
-                     randomY += 1000; //Utenfor skjermen
-               }
-               //Generer det fiendlige objektet
-                Crafty.e("2D, Canvas, Image, Collision, FiendtligObjekt, Persist")
-                  .attr({x: 1050, y: randomY, w: 30, h: 40, hSpeed: -4, rotation: 0})
-                  .origin("center")
-                  .checkHits()
-                  .onHit("spiller", function(){
-                    dod=true;
-                    Crafty.enterScene("score");
-                    Crafty("spiller").destroy();
-                  })
-                  .onHit("VeggDestroy", function() { // Fjern objektet når det treffer bakveggen
-                    this.destroy();
-                  })
-                  .image("assets/img/fiende"+Math.floor(((Math.random()*3)+1))+".png", "no-repeat")
-                  .bind('EnterFrame', function() {
-                    this.x += this.hSpeed;
-                    this.rotation += 1;
-                  })
-            };
+//Oppdater array med alle andreEtg bakker/gulv
+bakkeIder = Crafty("andreEtg").toArray();
+posisjonSisteBakke = Crafty("andreEtg").get(bakkeIder.length-1).x;
+  }
+}
+        
+//spawn area
+let spawnY = [20, 160, 340, 480];
+let spawnX = 985;
+let spawnW = 15;
+let spawnH = 120
+          
+//Generer fire spawnAreas fra array spawnY
+for(var i=0;i<spawnY.length;i++) {
+  Crafty.e("2D, Canvas, Color")
+    .attr({
+      x: spawnX,
+      y: spawnY[i],
+      w: spawnW,
+      h: spawnH
+    })
+    .color('blue');
+}
+
+// FiendtligObjekter
+let randomY = 0;
+let randomspawn;
+            
+//Funksjon for å generere fiender / fiendtlige objekter.
+function spawnFiendlig() {
+  randomY = Math.floor((Math.random()*68)+2);
+  randomspawn = Math.floor(((Math.random()*5)+1*(poeng/500)));
+               
+//Select spawn
+  switch(randomspawn) {
+    case 1:
+      randomY +=spawnY[1];
+      break;
+    
+    case 2:
+      randomY += spawnY[2];
+      break;
+    
+    case 3:
+      randomY += spawnY[3];
+      break;
+                 
+    case 4:
+      andomY += spawnY[4];
+      break;
+                 
+    default:
+      randomY += 1000; //Utenfor skjermen
+  }
+               
+//Generer det fiendlige objektet, definer konsekvenser ved kollisjon med spiller og vegg.
+Crafty.e("2D, Canvas, Image, Collision, FiendtligObjekt, Persist")
+  .attr({x: 1050, y: randomY, w: 30, h: 40, hSpeed: -4, rotation: 0})
+  .origin("center")
+  .checkHits()
+  .onHit("spiller", function() {
+    dod=true;
+    Crafty.enterScene("score");
+    Crafty("spiller").destroy();
+  })
+  .onHit("VeggDestroy", function() { // Fjern objektet når det treffer bakveggen
+    this.destroy();
+  })
+  .image("assets/img/fiende"+Math.floor(((Math.random()*3)+1))+".png", "no-repeat")
+  .bind('EnterFrame', function() {
+    this.x += this.hSpeed;
+    this.rotation += 1;
+  })
+};
 
 
-        // Tidsteller, teller tiendedels sekunder. On spiller death - run clearInterval (ikke implementert)
-        var time = 0;
-        var startTime = Date.now();
-        function timerUpdate () {
-          let time = Date.now() - startTime;
-          Crafty("timerText").text((time/1000).toFixed(3).toString() + " sek");
-        }
+// Tidsteller, teller hundredels sekunder.
+// Definer variabler time og startTime.
+var time = 0;
+var startTime = Date.now();
 
-        // Poengteller, gir gitt mengde poeng per interval
-          // Kan brukes til å øke hastigheten på økningen av poeng, feks når man passerer en viss poenggrense.
-          var poengMultiplier = 1.5;
-        function poengUpdate () {
-          poeng += 1 * poengMultiplier;
-          Crafty("poengText").text(poeng.toFixed(0).toString() + " livspoeng");
-        }
+function timerUpdate () {
+  let time = Date.now() - startTime;
+  Crafty("timerText").text((time/1000).toFixed(3).toString() + " sek");
+}
+
+// Poengteller, gir gitt mengde poeng per interval
+// poengMultiplier brukes til å øke hastigheten på økningen av poeng, feks når man passerer en viss poenggrense.
+var poengMultiplier = 1.5;
+        
+function poengUpdate () {
+  poeng += 1 * poengMultiplier;
+  Crafty("poengText").text(poeng.toFixed(0).toString() + " livspoeng");
+}
 }); //Avslutt define spillet
 
 //Definerer scorescene
