@@ -363,7 +363,7 @@ let randomspawn;
 //Funksjon for å generere fiender / fiendtlige objekter.
 function spawnFiendlig() {
   randomY = Math.floor((Math.random()*68)+2);
-  randomspawn = Math.floor(((Math.random()*5)+1*(poeng/500)));
+  randomspawn = Math.floor(((Math.random()*5)+1));
                
 //Select spawn
   switch(randomspawn) {
@@ -380,7 +380,7 @@ function spawnFiendlig() {
       break;
                  
     case 4:
-      andomY += spawnY[4];
+      randomY += spawnY[4];
       break;
                  
     default:
