@@ -56,13 +56,13 @@ Crafty.e("2D, Middle, MiddleLayer, Image, Persist")
       this.x += this.hSpeed;
     });
 
-Crafty.createLayer("ForegroundLayer", "Canvas",{z:2})
-Crafty.e("2D, Foreground, ForegroundLayer, Image, Persist")
-    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.50})
-    .image("assets/img/livet_foreground.png", "repeat")
-    .bind("EnterFrame", function() {
-      this.x += this.hSpeed;
-    });
+// Crafty.createLayer("ForegroundLayer", "Canvas",{z:2})
+// Crafty.e("2D, Foreground, ForegroundLayer, Image, Persist")
+   // .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.50})
+   // .image("assets/img/livet_foreground.png", "repeat")
+   // .bind("EnterFrame", function() {
+   //   this.x += this.hSpeed;
+   // });
 
 // Definerer Startskjerm
 Crafty.defineScene("startSkjerm", function() {
