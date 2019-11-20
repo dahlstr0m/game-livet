@@ -42,7 +42,7 @@ Crafty.background("#7DDEEF url(assets/img/livet_background.png) repeat center ce
 // Bakgrunnsby i ulike lag, med ulik fart. Tre lag.
 Crafty.createLayer("SkylineLayer", "Canvas",{z:0})
 Crafty.e("2D, Skyline, SkylineLayer, Image, Persist")
-    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.20})
+    .attr({x: 0, w: 800000, h: Crafty.viewport.height, hSpeed: -0.20})
     .image("assets/img/livet_skyline.png", "repeat")
     .bind("EnterFrame", function() {
       this.x += this.hSpeed;
@@ -50,7 +50,7 @@ Crafty.e("2D, Skyline, SkylineLayer, Image, Persist")
 
 Crafty.createLayer("MiddleLayer", "Canvas",{z:1})
 Crafty.e("2D, Middle, MiddleLayer, Image, Persist")
-    .attr({x: 0, w: 8000, h: Crafty.viewport.height, hSpeed: -0.30})
+    .attr({x: 0, w: 800000, h: Crafty.viewport.height, hSpeed: -0.30})
     .image("assets/img/livet_middle.png", "repeat")
     .bind("EnterFrame", function() {
       this.x += this.hSpeed;
