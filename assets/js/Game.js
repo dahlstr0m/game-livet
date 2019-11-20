@@ -248,20 +248,29 @@ Crafty.e("2D, DOM, Text, poengText, Persist")
 Crafty.defineScene("spillet", function() {
   let dod = false;
 
-//Oppdater hver klokkefrekvens
+//Oppdater poeng og timer hver klokkefrekvens
 setInterval(function () {
-  if (dod===false){ //oppdater tid og poeng så lenge ikke død
+  if (dod===false) { //oppdater tid og poeng så lenge ikke død
     poengUpdate();
     timerUpdate();
     }
 }, 100);
 
+// Kjør spawnBakke hvert 1000. millisek
 setInterval(function () {
-  if (dod===false){ //oppdater tid og poeng så lenge ikke død
+  if (dod===false) { //oppdater tid og poeng så lenge ikke død
     spawnBakke();
     spawnFiendlig();
   }
 }, 1000);
+
+// Kjør spawnFiendlig hvert 1000. millisek + en økende del av poengsummen
+setInterval(function () {
+  if (dod===false) { //oppdater tid og poeng så lenge ikke død
+    spawnFiendlig();
+    console.log("Generert nytt objekt");
+  }
+}, 1000-(poeng/10));
 
 // Bakken som spilleren løper på 2. nivå
 // Definerer variabler
